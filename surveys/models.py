@@ -10,6 +10,16 @@ class CompleteSurvey(models.Model):
         'Survey',
         on_delete = models.CASCADE
     )
+    question = models.ForeignKey(
+        'Question',
+        on_delete = models.CASCADE,
+        null=True
+    )
+    answer = models.ForeignKey(
+        'Answer',
+        on_delete = models.CASCADE,
+        null=True
+    )
 
 class Survey(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -33,6 +43,11 @@ class Question(models.Model):
 class Answer(models.Model):
     id = models.IntegerField(primary_key=True)
     content = models.TextField()
+    question = models.ForeignKey(
+        'Question',
+        on_delete= models.CASCADE,
+        null = True
+    )
 
 class SurveyQuestion(models.Model):
     id = models.AutoField(primary_key=True)
@@ -42,12 +57,5 @@ class SurveyQuestion(models.Model):
     )
     question = models.ForeignKey(
         'Question',
-        on_delete = models.CASCADE
-    )
-
-class QuestionAnswer(models.Model):
-    id = models.AutoField(primary_key=True)
-    answer = models.ForeignKey(
-        'Answer',
         on_delete = models.CASCADE
     )
