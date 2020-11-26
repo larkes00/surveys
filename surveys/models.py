@@ -13,23 +13,19 @@ class CompleteSurvey(models.Model):
     question = models.ForeignKey(
         'Question',
         on_delete = models.CASCADE,
-        null=True
     )
     answer = models.ForeignKey(
         'Answer',
         on_delete = models.CASCADE,
-        null=True
     )
 
 class Survey(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField(
-        null=True
     )
     author = models.ForeignKey(
         'User',
         on_delete = models.CASCADE,
-        null=True
     )
     area = models.ForeignKey(
         'SurveyArea',
@@ -54,7 +50,6 @@ class Answer(models.Model):
     question = models.ForeignKey(
         'Question',
         on_delete= models.CASCADE,
-        null = True
     )
 
 class SurveyQuestion(models.Model):
