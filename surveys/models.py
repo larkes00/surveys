@@ -18,6 +18,9 @@ class CompleteSurvey(models.Model):
         'Answer',
         on_delete = models.CASCADE,
     )
+    completed_at = models.DateField(
+        null=True
+    )
 
 class Survey(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -31,6 +34,9 @@ class Survey(models.Model):
         'SurveyArea',
         on_delete = models.CASCADE
     )
+    type = models.TextField(
+        null = True
+    )
 
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -42,7 +48,13 @@ class SurveyArea(models.Model):
 
 class Question(models.Model):
     id = models.IntegerField(primary_key=True)
-    content = models.TextField()    
+    content = models.TextField()
+    correct_answer = models.ForeignKey(
+        'Answer',
+        on_delete = models.CASCADE,
+        null = True,
+        related_name = 'correct_answer_id'
+    )    
 
 class Answer(models.Model):
     id = models.IntegerField(primary_key=True)
