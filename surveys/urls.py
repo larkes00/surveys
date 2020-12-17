@@ -19,5 +19,5 @@ from surveys import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('surveys/', views.surveys, name='surveys')
+    path('surveys/', views.surveys_list, name='surveys')
 ]
