@@ -1,9 +1,8 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotAllowed
 
-def list(request):
-    print(request.body)
-    if request.body:
-        print("Post")
-        return JsonResponse({'foo': 'bar'})
-    
-    raise ValueError
+
+def surveys(request):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
+
+    return JsonResponse({'foo': 'bar'})
