@@ -19,5 +19,9 @@ from surveys import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('surveys/', views.surveys_list, name='surveys')
+    path('surveys/', views.surveys_list, name='surveys'),
+    path('surveys/<int:survey_id>/', views.survey, name='surveys'),
+    path('users/', views.user_list, name='users'),
+    path('surveyareas/', views.survey_areas_list, name='users'),
+    path('questions/', views.question_list, name='questions'),
 ]
