@@ -31,5 +31,7 @@ urlpatterns = [
     path('survey_area/create/', views.new_survey_area, name='new_survey_area'),
     path('surveys/delete/', views.del_survey, name='del_survey'),
     path('question/delete/', views.del_question, name='del_question'),
-    path('answer/delete/', views.del_answer, name='del_answer')
+    path('answer/delete/', views.del_answer, name='del_answer'),
+    path('surveyarea/delete/', views.del_survey_area, name='del_survey_area'),
+    path('user/delete/', views.del_user, name='del_user')
 ]
