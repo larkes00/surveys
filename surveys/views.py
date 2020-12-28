@@ -1,5 +1,5 @@
 from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseNotFound, HttpResponseForbidden
-from surveys.models import Survey, Question, User, SurveyArea, Answer
+from surveys.models import Survey, Question, User, SurveyArea, Answer, SurveyQuestion
 import json
 
 
@@ -9,7 +9,7 @@ def surveys_list(request):
     surveys = Survey.objects.all()
     response_list = []
     for survey in surveys:
-        response_list.append({'id': survey.id, 'survey name': survey.name, 'type' : survey.type})
+        response_list.append({'id': survey.id, 'author_id': survey.author_id, 'area': survey.area_id ,'survey name': survey.name, 'type' : survey.type})
     
     return JsonResponse({'data': response_list})
 
@@ -84,7 +84,7 @@ def new_answer(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
     body = json.loads(request.body)
-    answer = Answer(id=body['id'], content=body['content'], question=body['question'])
+    answer = Answer(id=body['id'], content=body['content'], question_id=body['question_id'])
     answer.save()
     return JsonResponse({'date': body})
     
@@ -109,3 +109,26 @@ def del_survey(request):
     else:
         return HttpResponseForbidden()
     return JsonResponse({'date': survey.id})
+
+def del_question(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+    body = json.loads(request.body)
+    try:
+        question = Question.objects.get(id=body['id'])
+    except Question.DoesNotExist:
+        return HttpResponseNotFound('No such question')
+    question.delete()
+    return JsonResponse({'date': question.id})
+    
+def del_answer(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+    body = json.loads(request.body)
+    try:
+        answer = Answer.objects.get(id=body['id'])
+    except Question.DoesNotExist:
+        return HttpResponseNotFound('No such question')
+    answer.delete()
+    return JsonResponse({'date': answer.id})
+    

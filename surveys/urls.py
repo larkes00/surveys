@@ -26,8 +26,10 @@ urlpatterns = [
     path('questions/', views.question_list, name='questions'),
     path('surveys/create/', views.new_survey, name='create_survey'),
     path('user/create/', views.new_user, name='create_user'),
-    path('answer/create', views.new_answer, name='new_answer'),
+    path('answer/create/', views.new_answer, name='new_answer'),
     path('question/create/', views.new_question, name='new_question'),
     path('survey_area/create/', views.new_survey_area, name='new_survey_area'),
-    path('surveys/delete/', views.del_survey, name='del_survey')
+    path('surveys/delete/', views.del_survey, name='del_survey'),
+    path('question/delete/', views.del_question, name='del_question'),
+    path('answer/delete/', views.del_answer, name='del_answer')
 ]
