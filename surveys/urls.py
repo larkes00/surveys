@@ -20,15 +20,14 @@ from surveys import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('surveys/', views.surveys_list, name='surveys'),
-    path('surveys/<int:survey_id>/', views.survey, name='surveys'),
+    path('surveys/<int:survey_id>/', views.survey, name='survey'),
     path('users/', views.user_list, name='users'),
     path('surveyareas/', views.survey_areas_list, name='users'),
     path('questions/', views.question_list, name='questions'),
-    # path('new_survey/', views.new_survey, name='new_survey'),
-    # path('new_user/', views.new_user, name='new_user'),
-    # path('new_question/', views.new_question, name='new_question'),
-    # path('new_answer/', views.new_answer, name='new_answer'),
     path('surveys/create/', views.new_survey, name='create_survey'),
-    path('surveys/delete/', views.del_survey, name='del_survey'),
-    path('new_survey_area/', views.new_survey_area, name='new_survey_area')
+    path('user/create/', views.new_user, name='create_user'),
+    path('answer/create', views.new_answer, name='new_answer'),
+    path('question/create/', views.new_question, name='new_question'),
+    path('survey_area/create/', views.new_survey_area, name='new_survey_area'),
+    path('surveys/delete/', views.del_survey, name='del_survey')
 ]
