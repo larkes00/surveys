@@ -74,3 +74,10 @@ class SurveyQuestion(models.Model):
         'Question',
         on_delete = models.CASCADE
     )
+
+class Session(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(
+        'User',
+        on_delete = models.CASCADE
+    )
