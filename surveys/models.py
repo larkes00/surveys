@@ -40,6 +40,12 @@ class Survey(models.Model):
 
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
+    login = models.TextField(
+        null = True
+    )
+    password = models.TextField(
+        null = True
+    )
     name = models.TextField()
 
 class SurveyArea(models.Model):
