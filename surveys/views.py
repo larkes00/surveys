@@ -76,7 +76,7 @@ def new_question(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
     body = json.loads(request.body)
-    question = Question(id=body['id'], content=body['content'], correct_answer=body['correct_answer'])
+    question = Question(id=body['id'], content=body['content'], correct_answer_id=body['correct_answer_id'])
     question.save()
     return JsonResponse({'date': body})
 
@@ -128,7 +128,7 @@ def del_answer(request):
     try:
         answer = Answer.objects.get(id=body['id'])
     except Question.DoesNotExist:
-        return HttpResponseNotFound('No such question')
+        return HttpResponseNotFound('No such answer')
     answer.delete()
     return JsonResponse({'date': answer.id})
     
@@ -139,7 +139,7 @@ def del_survey_area(request):
     try:
         surveyarea = SurveyArea.objects.get(id=body['id'])
     except Question.DoesNotExist:
-        return HttpResponseNotFound('No such question')
+        return HttpResponseNotFound('No such survey area')
     surveyarea.delete()
     return JsonResponse({'date': surveyarea.id})
 
@@ -150,8 +150,9 @@ def del_user(request):
     try:
         user = User.objects.get(id=body['id'])
     except Question.DoesNotExist:
-        return HttpResponseNotFound('No such question')
+        return HttpResponseNotFound('No such user')
     user.delete()
     return JsonResponse({'date': user.id})
+    
 
     
