@@ -1,5 +1,5 @@
 from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseNotFound, HttpResponseForbidden
-from surveys.models import Survey, Question, User, SurveyArea, Answer, SurveyQuestion
+from surveys.models import Session, Survey, Question, User, SurveyArea, Answer, SurveyQuestion, Session
 import json
 
 
@@ -154,5 +154,34 @@ def del_user(request):
     user.delete()
     return JsonResponse({'date': user.id})
     
-
+def login(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+    body = json.loads(request.body)
+    try:
+        User.objects.get(login=body['login'])
+    except User.DoesNotExist:
+        return HttpResponseNotFound('No such user')
+    try:
+        user = User.objects.get(password=body['password'])
+    except User.DoesNotExist:
+        return HttpResponseNotFound('Wrong password')
+    session_list = Session.objects.all()
+    session_id = 0
+    for session in session_list:
+        if session.id is not None:
+            session_id = session.id
+    session_list = Session(id=session_id+1, user_id=user.id)
+    session_list.save()
+    return JsonResponse({'session_id': session_list.id})
     
+def singup(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+    body = json.loads(request.body)
+    user = User.objects.get(login=body['login'])
+    if user is not None:
+        return HttpResponseNotFound('Such user exists')
+    user = User(id=body['id'], name=body['name'], login=body['login'], password=body['password'])
+    user.save()
+    return JsonResponse({'date': body})

@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls.conf import include
 from surveys import views
 
 urlpatterns = [
@@ -33,5 +34,7 @@ urlpatterns = [
     path('question/delete/', views.del_question, name='del_question'),
     path('answer/delete/', views.del_answer, name='del_answer'),
     path('surveyarea/delete/', views.del_survey_area, name='del_survey_area'),
-    path('user/delete/', views.del_user, name='del_user')
+    path('user/delete/', views.del_user, name='del_user'),
+    path('login/', views.login, name='login'),
+    path('singup/', views.singup, name='singup')
 ]
