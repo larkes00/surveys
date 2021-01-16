@@ -10,11 +10,7 @@ def surveys_list(request):
     surveys = Survey.objects.all()
     users = User.objects.all()
     areas = SurveyArea.objects.all()
-    # response_list = []
-    # for survey in surveys:
-    #     response_list.append({'id': survey.id, 'author_id': survey.author_id, 'area': survey.area_id ,'survey name': survey.name, 'type' : survey.type})
-    
-    # return JsonResponse({'data': response_list})
+
     return render(request, 'surveys/surveys_list.html', {'surveys': surveys})
 
 def survey(request, survey_id):
@@ -124,20 +120,36 @@ def del_survey(request):
         return HttpResponseNotFound('No such survey')
     if survey.author_id == session.user_id:
         survey.delete()
+        return JsonResponse({'date': survey.id})
     else:
         return HttpResponseForbidden()
-    return JsonResponse({'date': survey.id})
 
 def del_question(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
     body = json.loads(request.body)
     try:
-        question = Question.objects.get(id=body['id'])
+        question = Question.objects.get(id=body['question_id'])
     except Question.DoesNotExist:
         return HttpResponseNotFound('No such question')
-    question.delete()
-    return JsonResponse({'date': question.id})
+    try:
+        survey = Survey.objects.get(id=body['survey_id'])
+    except Survey.DoesNotExist:
+        return HttpResponseNotFound('No such survey')
+    try:
+        survey_question = SurveyQuestion.objects.get(survey_id=survey.id, question_id=question.id)
+    except SurveyQuestion.DoesNotExist:
+        return HttpResponseNotFound('the question is not related to the survey')
+    try:
+        session = Session.objects.get(id=body['session_id'])
+    except Session.DoesNotExist:
+        return HttpResponseNotFound('User not login')
+    if session.user_id == survey.author_id:
+        question.delete()
+        return JsonResponse({'date': question.id})
+    else:
+        return HttpResponseNotAllowed()
+
     
 def del_answer(request):
     if request.method != 'POST':
