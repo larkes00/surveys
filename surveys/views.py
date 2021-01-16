@@ -1,17 +1,21 @@
 from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseNotFound, HttpResponseForbidden
 from surveys.models import Session, Survey, Question, User, SurveyArea, Answer, SurveyQuestion, Session
 import json
+from django.shortcuts import render
 
 
 def surveys_list(request):
     if request.method != 'GET':
         return HttpResponseNotAllowed(['GET'])
     surveys = Survey.objects.all()
-    response_list = []
-    for survey in surveys:
-        response_list.append({'id': survey.id, 'author_id': survey.author_id, 'area': survey.area_id ,'survey name': survey.name, 'type' : survey.type})
+    users = User.objects.all()
+    areas = SurveyArea.objects.all()
+    # response_list = []
+    # for survey in surveys:
+    #     response_list.append({'id': survey.id, 'author_id': survey.author_id, 'area': survey.area_id ,'survey name': survey.name, 'type' : survey.type})
     
-    return JsonResponse({'data': response_list})
+    # return JsonResponse({'data': response_list})
+    return render(request, 'surveys/surveys_list.html', {'surveys': surveys})
 
 def survey(request, survey_id):
     if request.method != 'GET':
@@ -23,6 +27,7 @@ def survey(request, survey_id):
     survey = Survey.objects.get(id=survey_id)
     response_list = []
     response_list.append({'id': survey.id, 'survey name': survey.name, 'type' : survey.type})
+    
     return JsonResponse({'date': response_list})
 
 
@@ -45,6 +50,15 @@ def question_list(request):
         response_list.append({'id': question.id, 'question name': question.content})
 
     return JsonResponse({'date': response_list})
+
+# TODO: Переделать функцию в survey
+def survey_question_list(request, survey_id):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
+    surveyquestions = SurveyQuestion.objects.filter(survey_id=survey_id)
+    survey = Survey.objects.get(id=survey_id)
+
+    return render(request, 'surveys/question_list.html', {'surveyquestions': surveyquestions, 'survey_id': survey_id})
 
 def survey_areas_list(request):
     if request.method != 'GET':
@@ -101,10 +115,14 @@ def del_survey(request):
         return HttpResponseNotAllowed(['POST'])
     body = json.loads(request.body)
     try:
+        session = Session.objects.get(id=body['session_id'])
+    except Session.DoesNotExist:
+        return HttpResponseNotFound('No such session')
+    try:
         survey = Survey.objects.get(id=body['id'])
     except Survey.DoesNotExist:
         return HttpResponseNotFound('No such survey')
-    if survey.author_id == body['author_id']:
+    if survey.author_id == session.user_id:
         survey.delete()
     else:
         return HttpResponseForbidden()
@@ -154,26 +172,36 @@ def del_user(request):
     user.delete()
     return JsonResponse({'date': user.id})
     
-def login(request):
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(['POST'])
-    body = json.loads(request.body)
-    try:
-        User.objects.get(login=body['login'])
-    except User.DoesNotExist:
-        return HttpResponseNotFound('No such user')
-    try:
-        user = User.objects.get(password=body['password'])
-    except User.DoesNotExist:
-        return HttpResponseNotFound('Wrong password')
-    session_list = Session.objects.all()
-    session_id = 0
-    for session in session_list:
-        if session.id is not None:
-            session_id = session.id
-    session_list = Session(id=session_id+1, user_id=user.id)
-    session_list.save()
-    return JsonResponse({'session_id': session_list.id})
+# def login(request):
+#     if request.method != 'POST':
+#         return HttpResponseNotAllowed(['POST'])
+#     body = json.loads(request.body)
+#     try:
+#         user = User.objects.get(login=body['login'])
+#     except User.DoesNotExist:
+#         return HttpResponseNotFound('No such user')
+#     # if user.password not in body['password']
+#     #     user = User.objects.get(password=body['password'])
+#     # except User.DoesNotExist:
+#     #     return HttpResponseNotFound('Wrong password')
+#     if user.password == body['password']:
+#         session_list = Session.objects.all()
+#         session_id = 0
+#         for session in session_list:
+#             if session.id is not None:
+#                 session_id = session.id
+#         session_list = Session(id=session_id+1, user_id=user.id)
+#         session_list.save()
+#     else:
+#         return HttpResponseNotFound('Wrong password')
+#     # session_list = Session.objects.all()
+#     # session_id = 0
+#     # for session in session_list:
+#     #     if session.id is not None:
+#     #         session_id = session.id
+#     # session_list = Session(id=session_id+1, user_id=user.id)
+#     # session_list.save()
+#     return JsonResponse({'session_id': session_list.id})
     
 def singup(request):
     if request.method != 'POST':
