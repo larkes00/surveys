@@ -172,36 +172,29 @@ def del_user(request):
     user.delete()
     return JsonResponse({'date': user.id})
     
-# def login(request):
-#     if request.method != 'POST':
-#         return HttpResponseNotAllowed(['POST'])
-#     body = json.loads(request.body)
-#     try:
-#         user = User.objects.get(login=body['login'])
-#     except User.DoesNotExist:
-#         return HttpResponseNotFound('No such user')
-#     # if user.password not in body['password']
-#     #     user = User.objects.get(password=body['password'])
-#     # except User.DoesNotExist:
-#     #     return HttpResponseNotFound('Wrong password')
-#     if user.password == body['password']:
-#         session_list = Session.objects.all()
-#         session_id = 0
-#         for session in session_list:
-#             if session.id is not None:
-#                 session_id = session.id
-#         session_list = Session(id=session_id+1, user_id=user.id)
-#         session_list.save()
-#     else:
-#         return HttpResponseNotFound('Wrong password')
-#     # session_list = Session.objects.all()
-#     # session_id = 0
-#     # for session in session_list:
-#     #     if session.id is not None:
-#     #         session_id = session.id
-#     # session_list = Session(id=session_id+1, user_id=user.id)
-#     # session_list.save()
-#     return JsonResponse({'session_id': session_list.id})
+def login(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+    body = json.loads(request.body)
+    try:
+        user = User.objects.get(login=body['login'])
+    except User.DoesNotExist:
+        return HttpResponseNotFound('No such user')
+    if user.password == body['password']:
+        try:
+            session = Session.objects.get(user_id=user.id)
+        except Session.DoesNotExist:
+            session_list = Session.objects.all()
+            session_id = 0
+            for session in session_list:
+                if session.id is not None:
+                    session_id = session.id
+                    session_list = Session(id=session_id+1, user_id=user.id)
+                    session_list.save()
+            return JsonResponse({'session_id': session_id})
+        return JsonResponse({'session_id': session.id})
+    else:
+        return HttpResponseNotFound('Wrong password')
     
 def singup(request):
     if request.method != 'POST':

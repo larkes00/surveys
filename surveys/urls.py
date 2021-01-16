@@ -25,6 +25,9 @@ urlpatterns = [
     path('users/', views.user_list, name='users'),
     path('surveyareas/', views.survey_areas_list, name='users'),
     path('questions/', views.question_list, name='questions'),
+    path('surveys/<int:survey_id>/questions/', views.survey_question_list, name='surveyquestions'),
+    #TODO: переделать
+    path('question/<int:question_id>/', views.survey, name='survey'),
     path('surveys/create/', views.new_survey, name='create_survey'),
     path('user/create/', views.new_user, name='create_user'),
     path('answer/create/', views.new_answer, name='new_answer'),

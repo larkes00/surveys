@@ -37,3 +37,11 @@ INSERT INTO surveys_completesurvey (survey_id, user_id, answer_id, question_id, 
 (2, 3, 1, 1, '2020-12-5'), (2, 3, 20, 1, '2020-12-5'), (4, 4, 13, 3, '2020-12-5'), (4, 4, 25, 9, '2020-12-5'), (4, 4, 27, 10, '2020-12-5'), 
 (3, 5, 7, 2, '2020-8-22'), (3, 5, 23, 8, '2020-8-22'), (2, 7, 15, 4, '2020-10-19'), (2, 7, 19, 5, '2020-10-19'), (2, 7, 29, 11, '2020-10-19'), (
 2, 7, 32, 12, '2020-10-19');
+UPDATE surveys_user SET login = 'Anything', password = '12345' WHERE id = 1;
+UPDATE surveys_user SET login = 'Happy', password = '123456789' WHERE id = 2;
+UPDATE surveys_user SET login = 'GoodMorning', password = '789123456' WHERE id = 3;
+UPDATE surveys_user SET login = 'Bad', password = '12345' WHERE id = 4;
+UPDATE surveys_user SET login = 'Good', password = 'xx12fa' WHERE id = 5;
+UPDATE surveys_user SET login = 'Men123', password = 'zxcvb' WHERE id = 6;
+UPDATE surveys_user SET login = 'RedPig', password = 'asdf' WHERE id = 7;
+UPDATE surveys_user SET login = 'Mouse', password = 'qwer' WHERE id = 8;
