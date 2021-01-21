@@ -82,7 +82,7 @@ class SurveyQuestion(models.Model):
     )
 
 class Session(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.TextField(primary_key=True)
     user = models.ForeignKey(
         'User',
         on_delete = models.CASCADE
