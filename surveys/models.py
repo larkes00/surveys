@@ -60,6 +60,11 @@ class Question(models.Model):
         on_delete = models.CASCADE,
         null = True,
         related_name = 'correct_answer_id'
+    )
+    author = models.ForeignKey(
+        'User',
+        on_delete=models.CASCADE,
+        null = True
     )    
 
 class Answer(models.Model):
