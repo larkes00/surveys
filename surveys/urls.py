@@ -25,8 +25,8 @@ urlpatterns = [
     path('users/', views.user_list, name='users'),
     path('surveyareas/', views.survey_areas_list, name='users'),
     path('questions/', views.question_list, name='questions'),
-    path('surveys/<int:survey_id>/questions/', views.survey_question_list, name='surveyquestions'),
     #TODO: переделать
+    path('surveys/<int:survey_id>/questions/', views.survey_question_list, name='surveyquestions'),
     path('question/<int:question_id>/', views.survey, name='survey'),
     path('surveys/create/', views.new_survey, name='create_survey'),
     path('user/create/', views.new_user, name='create_user'),
@@ -39,5 +39,7 @@ urlpatterns = [
     path('surveyarea/delete/', views.del_survey_area, name='del_survey_area'),
     path('user/delete/', views.del_user, name='del_user'),
     path('login/', views.login, name='login'),
-    path('singup/', views.singup, name='singup')
+    path('singup/', views.singup, name='singup'),
+    path('logout/', views.logout, name='logout'),
+    path('survey/edit/', views.edit_survey, name='edit_survey')
 ]

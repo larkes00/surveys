@@ -27,20 +27,8 @@ import uuid
 #     else:
 #         return session
 
-def create_session_code(string_length=20):
-    """Returns a random string of length string_length."""
-    random = str(uuid.uuid4()) # Convert UUID format to a Python string.
-    random = random.replace("-","") # Remove the UUID '-'.
-    return random[0:string_length] # Return the random string.
-
-def check_for_repeat(session_code):
-    while True:
-        try:
-            session = Session.objects.get(id=session_code)
-        except Session.DoesNotExist:
-            return session_code
-        else:
-            session_code = create_session_code()
+def create_session_code():
+    return str(uuid.uuid4())
         
 def surveys_list(request):
     if request.method != 'GET':
@@ -167,6 +155,10 @@ def del_question(request):
         return HttpResponseNotAllowed(['POST'])
     body = json.loads(request.body)
     try:
+        session = Session.objects.get(id=body['session_id'])
+    except Session.DoesNotExist:
+        return HttpResponse('User is not logged in', status=401)
+    try:
         question = Question.objects.get(id=body['question_id'])
     except Question.DoesNotExist:
         return HttpResponseNotFound('No such question')
@@ -177,22 +169,22 @@ def del_question(request):
     try:
         survey_question = SurveyQuestion.objects.get(survey_id=survey.id, question_id=question.id)
     except SurveyQuestion.DoesNotExist:
-        return HttpResponseNotFound('the question is not related to the survey')
-    try:
-        session = Session.objects.get(id=body['session_id'])
-    except Session.DoesNotExist:
-        return HttpResponse('User is not logged in', status=401)
-    if session.user_id == survey.author_id:
-        question.delete()
-        return JsonResponse({'date': question.id})
-    else:
-        return HttpResponseForbidden('You cannot delete a question in someone else''s survey')
+        if session.user_id == question.author_id:
+            question.delete()
+            return JsonResponse({'date': question.id})
+        else:
+            return HttpResponseForbidden('')
+    return HttpResponseForbidden('You cannot delete a question in someone else''s survey')
 
     
 def del_answer(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
     body = json.loads(request.body)
+    try:
+        session = Session.objects.get(id=body['session_id'])
+    except Session.DoesNotExist:
+        return HttpResponseNotFound('User is not logged in')
     try:
         answer = Answer.objects.get(id=body['answer_id'])
     except Answer.DoesNotExist:
@@ -210,10 +202,6 @@ def del_answer(request):
             surveyquestion = SurveyQuestion.objects.get(survey_id=survey.id, question_id=question.id)
         except SurveyQuestion.DoesNotExist:
             return HttpResponseNotFound('The question is not relevant to this survey')
-        try:
-            session = Session.objects.get(id=body['session_id'])
-        except Session.DoesNotExist:
-            return HttpResponseNotFound('User is not logged in')
         if session.id == survey.author_id:
             answer.delete()
         else:
@@ -256,7 +244,7 @@ def login(request):
         try:
             session = Session.objects.get(user_id=user.id)
         except Session.DoesNotExist:
-            session_code = check_for_repeat(create_session_code())
+            session_code = create_session_code()
             session_list = Session(id=session_code, user_id=user.id)
             session_list.save()
             return JsonResponse({'session_id': session_list.id})
@@ -286,21 +274,21 @@ def logout(request):
     session.delete()
     return JsonResponse({'data': 'd'})
 
-# def edit_survey(request):
-#     if request.method != 'POST':
-#         return HttpResponseNotAllowed(['POST'])
-#     body = json.loads(request.body)
-#     try:
-#         session = Session.objects.get(id=body['session_id'])
-#     except Session.DoesNotExist:
-#         return HttpResponseNotFound('No such session')
-#     try:
-#         survey = Survey.objects.get(id=body['id'])
-#     except Survey.DoesNotExist:
-#         return HttpResponseNotFound('No such survey')
-#     if survey.author_id == session.user_id:
-#         survey = Survey(id=body['id'], name=body['name'], author_id=body['author_id'], area_id=body['area_id'], type=body['type'])
-#         survey.save()
-#         return JsonResponse({'date': survey.id})
-#     else:
-#         return HttpResponseForbidden()
+def edit_survey(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+    body = json.loads(request.body)
+    try:
+        session = Session.objects.get(id=body['session_id'])
+    except Session.DoesNotExist:
+        return HttpResponseNotFound('No such session')
+    try:
+        survey = Survey.objects.get(id=body['id'])
+    except Survey.DoesNotExist:
+        return HttpResponseNotFound('No such survey')
+    if survey.author_id == session.user_id:
+        survey = Survey(id=body['id'], name=body['name'], author_id=body['author_id'], area_id=body['area_id'], type=body['type'])
+        survey.save()
+        return JsonResponse({'date': survey.id})
+    else:
+        return HttpResponseForbidden()
