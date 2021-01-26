@@ -19,6 +19,7 @@ from django.urls.conf import include
 
 from surveys import views
 
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("surveys/", views.surveys_list, name="surveys"),

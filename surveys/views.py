@@ -1,38 +1,32 @@
 import json
 
-from django.http import (
-    HttpResponse,
-    HttpResponseBadRequest,
-    HttpResponseForbidden,
-    HttpResponseNotAllowed,
-    HttpResponseNotFound,
-    JsonResponse,
-)
+from django.http import HttpResponse
+from django.http import HttpResponseBadRequest
+from django.http import HttpResponseForbidden
+from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseNotFound
+from django.http import JsonResponse
 from django.shortcuts import render
 
-from logic import (
-    create_session_code,
-    get_answer,
-    get_question,
-    get_session,
-    get_survey,
-    get_survey_area,
-    get_survey_question,
-    get_user,
-    parce_questions,
-    parce_survey_area,
-    parce_surveys,
-    parce_users,
-)
-from surveys.models import (
-    Answer,
-    Question,
-    Session,
-    Survey,
-    SurveyArea,
-    SurveyQuestion,
-    User,
-)
+from logic import create_session_code
+from logic import get_answer
+from logic import get_question
+from logic import get_session
+from logic import get_survey
+from logic import get_survey_area
+from logic import get_survey_question
+from logic import get_user
+from logic import parce_questions
+from logic import parce_survey_area
+from logic import parce_surveys
+from logic import parce_users
+from surveys.models import Answer
+from surveys.models import Question
+from surveys.models import Session
+from surveys.models import Survey
+from surveys.models import SurveyArea
+from surveys.models import SurveyQuestion
+from surveys.models import User
 
 
 def surveys_list(request):
