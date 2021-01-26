@@ -7,33 +7,41 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('surveys', '0006_auto_20201119_0807'),
+        ("surveys", "0006_auto_20201119_0807"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='answer',
-            name='question',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surveys.question'),
+            model_name="answer",
+            name="question",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="surveys.question"
+            ),
         ),
         migrations.AlterField(
-            model_name='completesurvey',
-            name='answer',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surveys.answer'),
+            model_name="completesurvey",
+            name="answer",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="surveys.answer"
+            ),
         ),
         migrations.AlterField(
-            model_name='completesurvey',
-            name='question',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surveys.question'),
+            model_name="completesurvey",
+            name="question",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="surveys.question"
+            ),
         ),
         migrations.AlterField(
-            model_name='survey',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surveys.user'),
+            model_name="survey",
+            name="author",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="surveys.user"
+            ),
         ),
         migrations.AlterField(
-            model_name='survey',
-            name='name',
+            model_name="survey",
+            name="name",
             field=models.TextField(),
         ),
     ]

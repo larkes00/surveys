@@ -8,70 +8,97 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Answer',
+            name="Answer",
             fields=[
-                ('id', models.IntegerField(primary_key=True, serialize=False)),
-                ('content', models.TextField()),
+                ("id", models.IntegerField(primary_key=True, serialize=False)),
+                ("content", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='Question',
+            name="Question",
             fields=[
-                ('id', models.IntegerField(primary_key=True, serialize=False)),
-                ('content', models.TextField()),
+                ("id", models.IntegerField(primary_key=True, serialize=False)),
+                ("content", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='Survey',
+            name="Survey",
             fields=[
-                ('id', models.IntegerField(primary_key=True, serialize=False)),
+                ("id", models.IntegerField(primary_key=True, serialize=False)),
             ],
         ),
         migrations.CreateModel(
-            name='SurveyArea',
+            name="SurveyArea",
             fields=[
-                ('id', models.IntegerField(primary_key=True, serialize=False)),
-                ('name', models.TextField()),
+                ("id", models.IntegerField(primary_key=True, serialize=False)),
+                ("name", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.IntegerField(primary_key=True, serialize=False)),
-                ('name', models.TextField()),
+                ("id", models.IntegerField(primary_key=True, serialize=False)),
+                ("name", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='SurveyQuestion',
+            name="SurveyQuestion",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surveys.question')),
-                ('survey', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surveys.survey')),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "question",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="surveys.question",
+                    ),
+                ),
+                (
+                    "survey",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="surveys.survey"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='survey',
-            name='area',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surveys.surveyarea'),
+            model_name="survey",
+            name="area",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="surveys.surveyarea"
+            ),
         ),
         migrations.CreateModel(
-            name='QuestionAnswer',
+            name="QuestionAnswer",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('answer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surveys.answer')),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "answer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="surveys.answer"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='CompleteSurvey',
+            name="CompleteSurvey",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('survey', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surveys.survey')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surveys.user')),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "survey",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="surveys.survey"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="surveys.user"
+                    ),
+                ),
             ],
         ),
     ]

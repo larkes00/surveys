@@ -1,94 +1,68 @@
 from django.db import models
 
+
 class CompleteSurvey(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(
-        'User',
-        on_delete = models.CASCADE
-    )
-    survey = models.ForeignKey(
-        'Survey',
-        on_delete = models.CASCADE
-    )
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    survey = models.ForeignKey("Survey", on_delete=models.CASCADE)
     question = models.ForeignKey(
-        'Question',
-        on_delete = models.CASCADE,
+        "Question",
+        on_delete=models.CASCADE,
     )
     answer = models.ForeignKey(
-        'Answer',
-        on_delete = models.CASCADE,
+        "Answer",
+        on_delete=models.CASCADE,
     )
-    completed_at = models.DateField(
-        null=True
-    )
+    completed_at = models.DateField(null=True)
+
 
 class Survey(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.TextField(
-    )
+    name = models.TextField()
     author = models.ForeignKey(
-        'User',
-        on_delete = models.CASCADE,
+        "User",
+        on_delete=models.CASCADE,
     )
-    area = models.ForeignKey(
-        'SurveyArea',
-        on_delete = models.CASCADE
-    )
-    type = models.TextField(
-        null = True
-    )
+    area = models.ForeignKey("SurveyArea", on_delete=models.CASCADE)
+    type = models.TextField(null=True)
+
 
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
-    login = models.TextField(
-        null = True
-    )
-    password = models.TextField(
-        null = True
-    )
+    login = models.TextField(null=True)
+    password = models.TextField(null=True)
     name = models.TextField()
+
 
 class SurveyArea(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField()
 
+
 class Question(models.Model):
     id = models.IntegerField(primary_key=True)
     content = models.TextField()
     correct_answer = models.ForeignKey(
-        'Answer',
-        on_delete = models.CASCADE,
-        null = True,
-        related_name = 'correct_answer_id'
+        "Answer", on_delete=models.CASCADE, null=True, related_name="correct_answer_id"
     )
-    author = models.ForeignKey(
-        'User',
-        on_delete=models.CASCADE,
-        null = True
-    )    
+    author = models.ForeignKey("User", on_delete=models.CASCADE, null=True)
+
 
 class Answer(models.Model):
     id = models.IntegerField(primary_key=True)
     content = models.TextField()
     question = models.ForeignKey(
-        'Question',
-        on_delete= models.CASCADE,
+        "Question",
+        on_delete=models.CASCADE,
     )
+
 
 class SurveyQuestion(models.Model):
     id = models.AutoField(primary_key=True)
-    survey = models.ForeignKey(
-        'Survey',
-        on_delete = models.CASCADE
-    )
-    question = models.ForeignKey(
-        'Question',
-        on_delete = models.CASCADE
-    )
+    survey = models.ForeignKey("Survey", on_delete=models.CASCADE)
+    question = models.ForeignKey("Question", on_delete=models.CASCADE)
+
 
 class Session(models.Model):
     id = models.TextField(primary_key=True)
-    user = models.ForeignKey(
-        'User',
-        on_delete = models.CASCADE
-    )
+    user = models.ForeignKey("User", on_delete=models.CASCADE)

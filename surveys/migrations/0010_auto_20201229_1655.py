@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('surveys', '0009_session'),
+        ("surveys", "0009_session"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='login',
+            model_name="user",
+            name="login",
             field=models.TextField(null=True),
         ),
         migrations.AddField(
-            model_name='user',
-            name='password',
+            model_name="user",
+            name="password",
             field=models.TextField(null=True),
         ),
     ]

@@ -12,4 +12,3 @@ admin.site.register(Survey)
 admin.site.register(SurveyArea)
 admin.site.register(Question)
 admin.site.register(Answer)
-
