@@ -1,25 +1,26 @@
+import json
 import uuid
+
 from django.http import (
-    JsonResponse,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
     HttpResponseNotAllowed,
     HttpResponseNotFound,
-    HttpResponseForbidden,
-    HttpResponseBadRequest,
-    HttpResponse,
+    JsonResponse,
     request,
 )
+from django.shortcuts import render
+
 from surveys.models import (
+    Answer,
+    Question,
     Session,
     Survey,
-    Question,
-    User,
     SurveyArea,
-    Answer,
     SurveyQuestion,
-    Session,
+    User,
 )
-import json
-from django.shortcuts import render
 
 
 def create_session_code():
