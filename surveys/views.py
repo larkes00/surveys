@@ -25,7 +25,6 @@ from surveys.models import Question
 from surveys.models import Session
 from surveys.models import Survey
 from surveys.models import SurveyArea
-from surveys.models import SurveyQuestion
 from surveys.models import User
 
 
@@ -130,16 +129,13 @@ def del_survey(request):
     session = get_session(body["session_id"])
     if session is None:
         return HttpResponseNotFound("No such session")
-    else:
-        survey = get_survey(body["survey_id"])
-        if survey is None:
-            return HttpResponseNotFound("No such survey")
-        else:
-            if survey.author_id == session.user_id:
-                survey.delete()
-                return JsonResponse({"date": survey.id})
-            else:
-                return HttpResponseForbidden("")
+    survey = get_survey(body["survey_id"])
+    if survey is None:
+        return HttpResponseNotFound("No such survey")
+    if survey.author_id == session.user_id:
+        survey.delete()
+        return JsonResponse({"date": survey.id})
+    return HttpResponseForbidden("You cannot delete someone else''s survey")
 
 
 def del_question(request):
@@ -149,25 +145,19 @@ def del_question(request):
     session = get_session(body["sesion_id"])
     if session is None:
         return HttpResponse("User is not logged in", status=401)
-    else:
-        question = get_question(body["question_id"])
-        if question is None:
-            return HttpResponseNotFound("No such question")
-        else:
-            survey = get_survey(body["survey_id"])
-            survey_question = get_survey_question(question.id, survey.id)
-            if survey_question is None:
-                if session.user_id == question.author_id:
-                    question.delete()
-                    return JsonResponse({"date": question.id})
-                else:
-                    return HttpResponseForbidden(
-                        "You are not the owner of the question"
-                    )
-            else:
-                return HttpResponseForbidden(
-                    "You cannot delete a question related to surveys"
-                )
+    question = get_question(body["question_id"])
+    if question is None:
+        return HttpResponseNotFound("No such question")
+    survey = get_survey(body["survey_id"])
+    survey_question = get_survey_question(question.id, survey.id)
+    if survey_question is None:
+        if session.user_id == question.author_id:
+            question.delete()
+            return JsonResponse({"date": question.id})
+        return HttpResponseForbidden("You are not the owner of the question")
+    return HttpResponseForbidden(  # fmt: off
+        "You cannot delete a question related to surveys"
+    )  # fmt: on
 
 
 def del_answer(request):
@@ -177,21 +167,18 @@ def del_answer(request):
     session = get_session(body["session_id"])
     if session is None:
         return HttpResponseNotFound("User is not logged in")
-    else:
-        answer = get_answer(body["answer_id"])
-        if answer is None:
-            return HttpResponseNotFound("No such answer")
-        else:
-            question = get_question(answer.question_id)
-            survey = get_survey(body["survey_id"])
-            survey_question = get_survey_question(question.id, survey.id)
-            if survey_question is None:
-                answer.delete()
-                return JsonResponse({"date": answer.id})
-            else:
-                return HttpResponseForbidden(
-                    "You cannot delete a reply used by other people "
-                )
+    answer = get_answer(body["answer_id"])
+    if answer is None:
+        return HttpResponseNotFound("No such answer")
+    question = get_question(answer.question_id)
+    survey = get_survey(body["survey_id"])
+    survey_question = get_survey_question(question.id, survey.id)
+    if survey_question is None:
+        answer.delete()
+        return JsonResponse({"date": answer.id})
+    return HttpResponseForbidden(  # fmt: off
+        "You cannot delete a reply used by other people"
+    )  # fmt: on
 
 
 def del_survey_area(request):
@@ -223,18 +210,15 @@ def login(request):
     user = get_user(body["login"])
     if user is None:
         return HttpResponseNotFound("No such user")
-    else:
-        if user.password == body["password"]:
-            session = get_session(user_id=user.id)
-            if session is None:
-                session_code = create_session_code()
-                session_list = Session(id=session_code, user_id=user.id)
-                session_list.save()
-                return JsonResponse({"session_id": session_list.id})
-            else:
-                return JsonResponse({"session_id": session.id})
-        else:
-            return HttpResponseForbidden("Wrong password")
+    if user.password == body["password"]:
+        session = get_session(user_id=user.id)
+        if session is None:
+            session_code = create_session_code()
+            session_list = Session(id=session_code, user_id=user.id)
+            session_list.save()
+            return JsonResponse({"session_id": session_list.id})
+        return JsonResponse({"session_id": session.id})
+    return HttpResponseForbidden("Wrong password")
 
 
 def singup(request):
@@ -251,8 +235,7 @@ def singup(request):
         )
         user.save()
         return JsonResponse({"date": body})
-    else:
-        return HttpResponseBadRequest("Such user exists")
+    return HttpResponseBadRequest("Such user exists")
 
 
 def logout(request):
@@ -273,18 +256,17 @@ def edit_survey(request):
     session = get_session(body["session_id"])
     if session is None:
         return HttpResponseNotFound("No such session")
-    else:
-        survey = get_survey(body["survey_id"])
-        if survey is None:
-            return HttpResponseNotFound("No such survey")
-        else:
-            if survey.author_id == session.user_id:
-                survey = Survey.objects.filter(id=body["survey_id"]).update(
-                    name=body["name"]
-                )
-                survey = Survey.objects.filter(id=body["survey_id"]).update(
-                    type=body["type"]
-                )
-                return JsonResponse({"date": survey})
-            else:
-                return HttpResponseForbidden("")
+    survey = get_survey(body["survey_id"])
+    if survey is None:
+        return HttpResponseNotFound("No such survey")
+    if survey.author_id == session.user_id:
+        # fmt: off
+        survey = Survey.objects.filter(id=body["survey_id"]).update(
+            name=body["name"]
+        )
+        survey = Survey.objects.filter(id=body["survey_id"]).update(
+            type=body["type"]
+        )
+        # fmt: on
+        return JsonResponse({"date": survey})
+    return HttpResponseForbidden("")

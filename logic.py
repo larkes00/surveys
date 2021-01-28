@@ -1,23 +1,10 @@
-import json
 import uuid
-
-from django.http import (
-    HttpResponse,
-    HttpResponseBadRequest,
-    HttpResponseForbidden,
-    HttpResponseNotAllowed,
-    HttpResponseNotFound,
-    JsonResponse,
-    request,
-)
-from django.shortcuts import render
 
 from surveys.models import (
     Answer,
     Question,
     Session,
     Survey,
-    SurveyArea,
     SurveyQuestion,
     User,
 )
@@ -107,7 +94,7 @@ def parce_surveys(surveys):
                     "type": survey.type,
                 }
             )
-    except:
+    except TypeError:
         response_list.append(
             {
                 "id": surveys.id,
@@ -144,5 +131,7 @@ def parce_questions(questions):
 def parce_survey_area(survey_areas):
     response_list = []
     for survey_area in survey_areas:
-        response_list.append({"id": survey_area.id, "question name": survey_area.name})
+        response_list.append(  # fmt: off
+            {"id": survey_area.id, "question name": survey_area.name}
+        )  # fmt: on
     return response_list

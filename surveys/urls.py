@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.urls.conf import include
+from django.urls.conf import include  # noqa: F401 pylint: disable=W0611
 
 from surveys import views
 

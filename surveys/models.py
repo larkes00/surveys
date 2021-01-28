@@ -43,7 +43,10 @@ class Question(models.Model):
     id = models.IntegerField(primary_key=True)
     content = models.TextField()
     correct_answer = models.ForeignKey(
-        "Answer", on_delete=models.CASCADE, null=True, related_name="correct_answer_id"
+        "Answer",  # fmt: off
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="correct_answer_id",  # fmt: on
     )
     author = models.ForeignKey("User", on_delete=models.CASCADE, null=True)
 
