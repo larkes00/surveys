@@ -5,3 +5,5 @@ pylint==2.6.0
 isort==5.5.2
 flake8==3.8.4
 black==20.8b1
+pylint_django==2.4.2
+pytest_django==4.1.0
