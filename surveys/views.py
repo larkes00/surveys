@@ -203,6 +203,24 @@ def del_user(request):
     return JsonResponse({"date": user.id})
 
 
+# def login(request):
+#     if request.method != "POST":
+#         return HttpResponseNotAllowed(["POST"])
+#     body = json.loads(request.body)
+#     user = get_user(body["login"])
+#     if user is None:
+#         return HttpResponseNotFound("No such user")
+#     if user.password == body["password"]:
+#         session = get_session(user_id=user.id)
+#         if session is None:
+#             session_code = create_session_code()
+#             session_list = Session(id=session_code, user_id=user.id)
+#             session_list.save()
+#             return JsonResponse({"session_id": session_list.id})
+#         return JsonResponse({"session_id": session.id})
+#     return HttpResponseForbidden("Wrong password")
+
+
 def login(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -220,28 +238,53 @@ def login(request):
     return HttpResponseForbidden("Wrong password")
 
 
+# def singup(request):
+#     if request.method != "POST":
+#         return HttpResponseNotAllowed(["POST"])
+#     body = json.loads(request.body)
+#     user = get_user(body["login"])
+#     if user is None:
+#         user = User(
+#             id=body["id"],
+#             name=body["name"],
+#             login=body["login"],
+#             password=body["password"],
+#         )
+#         user.save()
+#         return JsonResponse({"date": body})
+#     return HttpResponseBadRequest("Such user exists")
+
+
 def singup(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
-    body = json.loads(request.body)
-    user = get_user(body["login"])
+    user = get_user(request.POST["login"])
     if user is None:
         user = User(
-            id=body["id"],
-            name=body["name"],
-            login=body["login"],
-            password=body["password"],
+            name=request.POST["name"],
+            login=request.POST["login"],
+            password=request.POST["password"],
         )
         user.save()
-        return JsonResponse({"date": body})
+        return JsonResponse({"date": request.POST})
     return HttpResponseBadRequest("Such user exists")
+
+
+# def logout(request):
+#     if request.method != "POST":
+#         return HttpResponseNotAllowed(["POST"])
+#     body = json.loads(request.body)
+#     session = get_session(body["session_id"])
+#     if session is None:
+#         return HttpResponseBadRequest("User already logout")
+#     session.delete()
+#     return JsonResponse({"data": "d"})
 
 
 def logout(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
-    body = json.loads(request.body)
-    session = get_session(body["session_id"])
+    session = get_session(request.POST["session_id"])
     if session is None:
         return HttpResponseBadRequest("User already logout")
     session.delete()
