@@ -17,7 +17,7 @@ class CompleteSurvey(models.Model):
 
 
 class Survey(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
     author = models.ForeignKey(
         "User",
@@ -28,19 +28,19 @@ class Survey(models.Model):
 
 
 class User(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     login = models.TextField(null=True)
     password = models.TextField(null=True)
     name = models.TextField()
 
 
 class SurveyArea(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
 
 
 class Question(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     content = models.TextField()
     correct_answer = models.ForeignKey(
         "Answer",  # fmt: off
@@ -52,7 +52,7 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     content = models.TextField()
     question = models.ForeignKey(
         "Question",
