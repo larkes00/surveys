@@ -38,10 +38,10 @@ def surveys_list(request):
 def survey(request, survey_id):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
-    survey = get_survey(survey_id)
-    if survey is None:
+    survey_obj = get_survey(survey_id)
+    if survey_obj is None:
         return HttpResponseNotFound("No such survey")
-    return JsonResponse({"date": parce_surveys(survey)})
+    return JsonResponse({"date": parce_surveys(survey_obj)})
 
 
 def user_list(request):
@@ -69,14 +69,14 @@ def new_survey(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
-    survey = Survey(
+    survey_obj = Survey(
         id=body["id"],
         author_id=body["author_id"],
         area_id=body["area_id"],
         name=body["name"],
         type=body["type"],
     )
-    survey.save()
+    survey_obj.save()
     return JsonResponse({"date": body})
 
 
@@ -129,12 +129,12 @@ def del_survey(request):
     session = get_session(body["session_id"])
     if session is None:
         return HttpResponseNotFound("No such session")
-    survey = get_survey(body["survey_id"])
-    if survey is None:
+    survey_obj = get_survey(body["survey_id"])
+    if survey_obj is None:
         return HttpResponseNotFound("No such survey")
-    if survey.author_id == session.user_id:
-        survey.delete()
-        return JsonResponse({"date": survey.id})
+    if survey_obj.author_id == session.user_id:
+        survey_obj.delete()
+        return JsonResponse({"date": survey_obj.id})
     return HttpResponseForbidden("You cannot delete someone else''s survey")
 
 
@@ -148,8 +148,8 @@ def del_question(request):
     question = get_question(body["question_id"])
     if question is None:
         return HttpResponseNotFound("No such question")
-    survey = get_survey(body["survey_id"])
-    survey_question = get_survey_question(question.id, survey.id)
+    survey_obj = get_survey(body["survey_id"])
+    survey_question = get_survey_question(question.id, survey_obj.id)
     if survey_question is None:
         if session.user_id == question.author_id:
             question.delete()
@@ -171,8 +171,8 @@ def del_answer(request):
     if answer is None:
         return HttpResponseNotFound("No such answer")
     question = get_question(answer.question_id)
-    survey = get_survey(body["survey_id"])
-    survey_question = get_survey_question(question.id, survey.id)
+    survey_obj = get_survey(body["survey_id"])
+    survey_question = get_survey_question(question.id, survey_obj.id)
     if survey_question is None:
         answer.delete()
         return JsonResponse({"date": answer.id})
@@ -206,11 +206,10 @@ def del_user(request):
 def login(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
-    body = json.loads(request.body)
-    user = get_user(body["login"])
+    user = get_user(request.POST["login"])
     if user is None:
         return HttpResponseNotFound("No such user")
-    if user.password == body["password"]:
+    if user.password == request.POST["password"]:
         session = get_session(user_id=user.id)
         if session is None:
             session_code = create_session_code()
@@ -256,15 +255,15 @@ def edit_survey(request):
     session = get_session(body["session_id"])
     if session is None:
         return HttpResponseNotFound("No such session")
-    survey = get_survey(body["survey_id"])
-    if survey is None:
+    survey_obj = get_survey(body["survey_id"])
+    if survey_obj is None:
         return HttpResponseNotFound("No such survey")
-    if survey.author_id == session.user_id:
+    if survey_obj.author_id == session.user_id:
         # fmt: off
-        survey = Survey.objects.filter(id=body["survey_id"]).update(
+        survey_obj = Survey.objects.filter(id=body["survey_id"]).update(
             name=body["name"]
         )
-        survey = Survey.objects.filter(id=body["survey_id"]).update(
+        survey_obj = Survey.objects.filter(id=body["survey_id"]).update(
             type=body["type"]
         )
         # fmt: on
