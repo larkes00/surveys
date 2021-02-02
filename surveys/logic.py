@@ -1,13 +1,11 @@
 import uuid
 
-from surveys.models import (
-    Answer,
-    Question,
-    Session,
-    Survey,
-    SurveyQuestion,
-    User,
-)
+from surveys.models import Answer
+from surveys.models import Question
+from surveys.models import Session
+from surveys.models import Survey
+from surveys.models import SurveyQuestion
+from surveys.models import User
 
 
 def create_session_code():
@@ -82,31 +80,16 @@ def get_user(login):
         return user
 
 
-def parce_surveys(surveys):
-    response_list = []
-    try:
-        for survey in surveys:
-            response_list.append(
-                {
-                    "id": survey.id,
-                    "author_id": survey.author_id,
-                    "survey name": survey.name,
-                    "type": survey.type,
-                }
-            )
-    except TypeError:
-        response_list.append(
-            {
-                "id": surveys.id,
-                "author_id": surveys.author_id,
-                "survey name": surveys.name,
-                "type": surveys.type,
-            }
-        )
-    return response_list
+def parse_surveys(surveys):
+    return {
+        "id": surveys.id,
+        "author_id": surveys.author_id,
+        "survey name": surveys.name,
+        "type": surveys.type,
+    }
 
 
-def parce_users(users):
+def parse_users(users):
     response_list = []
     for user in users:
         response_list.append(
@@ -115,7 +98,7 @@ def parce_users(users):
     return response_list
 
 
-def parce_questions(questions):
+def parse_questions(questions):
     response_list = []
     for question in questions:
         response_list.append(
@@ -128,7 +111,7 @@ def parce_questions(questions):
     return response_list
 
 
-def parce_survey_area(survey_areas):
+def parse_survey_area(survey_areas):
     response_list = []
     for survey_area in survey_areas:
         response_list.append(  # fmt: off
