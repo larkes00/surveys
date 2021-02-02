@@ -1,14 +1,16 @@
+from surveys.tests.test_views.helpers import make_session, make_user
 import pytest
 from django import urls
-from surveys.models import Session
+
+
+def setup():
+    make_user()
+    make_session()
 
 
 @pytest.mark.django_db
 def test_successful_logout(client):
     url = urls.reverse("logout")
-    Session.objects.create(
-        id="c101a895-f2c0-43a9-ac3e-a54f7f3s4d56", user_id=1
-    )  # fmt: off
     response = client.post(
         url,
         {"session_id": "c101a895-f2c0-43a9-ac3e-a54f7f334d56"},
@@ -20,9 +22,6 @@ def test_successful_logout(client):
 @pytest.mark.django_db
 def test_unsuccessful_logout(client):
     url = urls.reverse("logout")
-    Session.objects.create(  # fmt: off
-        id="c101a895-f2c0-43a9-ac3e-a54f7f3s4d56", user_id=1
-    )  # fmt: on
     response = client.post(
         url, {"session_id": "21daxz"}, content_type="application/json"
     )
