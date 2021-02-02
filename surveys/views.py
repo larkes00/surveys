@@ -8,18 +8,18 @@ from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from logic import create_session_code
-from logic import get_answer
-from logic import get_question
-from logic import get_session
-from logic import get_survey
-from logic import get_survey_area
-from logic import get_survey_question
-from logic import get_user
-from logic import parce_questions
-from logic import parce_survey_area
-from logic import parce_surveys
-from logic import parce_users
+from surveys.logic import create_session_code
+from surveys.logic import get_answer
+from surveys.logic import get_question
+from surveys.logic import get_session
+from surveys.logic import get_survey
+from surveys.logic import get_survey_area
+from surveys.logic import get_survey_question
+from surveys.logic import get_user
+from surveys.logic import parse_questions
+from surveys.logic import parse_survey_area
+from surveys.logic import parse_surveys
+from surveys.logic import parse_users
 from surveys.models import Answer
 from surveys.models import Question
 from surveys.models import Session
@@ -41,28 +41,28 @@ def survey(request, survey_id):
     survey_obj = get_survey(survey_id)
     if survey_obj is None:
         return HttpResponseNotFound("No such survey")
-    return JsonResponse({"date": parce_surveys(survey_obj)})
+    return JsonResponse({"data": parse_surveys(survey_obj)})
 
 
 def user_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
     users = User.objects.all()
-    return JsonResponse({"data": parce_users(users)})
+    return JsonResponse({"data": parse_users(users)})
 
 
 def question_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
     questions = Question.objects.all()
-    return JsonResponse({"date": parce_questions(questions)})
+    return JsonResponse({"data": parse_questions(questions)})
 
 
 def survey_areas_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
     survey_areas = SurveyArea.objects.all()
-    return JsonResponse({"date": parce_survey_area(survey_areas)})
+    return JsonResponse({"data": parse_survey_area(survey_areas)})
 
 
 def new_survey(request):
@@ -77,7 +77,7 @@ def new_survey(request):
         type=body["type"],
     )
     survey_obj.save()
-    return JsonResponse({"date": body})
+    return JsonResponse({"data": body})
 
 
 def new_user(request):
@@ -86,7 +86,7 @@ def new_user(request):
     body = json.loads(request.body)
     user = User(id=body["id"], name=body["name"])
     user.save()
-    return JsonResponse({"date": body})
+    return JsonResponse({"data": body})
 
 
 def new_question(request):
@@ -99,7 +99,7 @@ def new_question(request):
         correct_answer_id=body["correct_answer_id"],
     )
     question.save()
-    return JsonResponse({"date": body})
+    return JsonResponse({"data": body})
 
 
 def new_answer(request):
@@ -110,7 +110,7 @@ def new_answer(request):
         id=body["id"], content=body["content"], question_id=body["question_id"]
     )
     answer.save()
-    return JsonResponse({"date": body})
+    return JsonResponse({"data": body})
 
 
 def new_survey_area(request):
@@ -119,7 +119,7 @@ def new_survey_area(request):
     body = json.loads(request.body)
     survey_area = SurveyArea(id=body["id"], name=body["name"])
     survey_area.save()
-    return JsonResponse({"date": body})
+    return JsonResponse({"data": body})
 
 
 def del_survey(request):
@@ -134,7 +134,7 @@ def del_survey(request):
         return HttpResponseNotFound("No such survey")
     if survey_obj.author_id == session.user_id:
         survey_obj.delete()
-        return JsonResponse({"date": survey_obj.id})
+        return JsonResponse({"data": survey_obj.id})
     return HttpResponseForbidden("You cannot delete someone else''s survey")
 
 
@@ -153,7 +153,7 @@ def del_question(request):
     if survey_question is None:
         if session.user_id == question.author_id:
             question.delete()
-            return JsonResponse({"date": question.id})
+            return JsonResponse({"data": question.id})
         return HttpResponseForbidden("You are not the owner of the question")
     return HttpResponseForbidden(  # fmt: off
         "You cannot delete a question related to surveys"
@@ -175,7 +175,7 @@ def del_answer(request):
     survey_question = get_survey_question(question.id, survey_obj.id)
     if survey_question is None:
         answer.delete()
-        return JsonResponse({"date": answer.id})
+        return JsonResponse({"data": answer.id})
     return HttpResponseForbidden(  # fmt: off
         "You cannot delete a reply used by other people"
     )  # fmt: on
@@ -189,7 +189,7 @@ def del_survey_area(request):
     if survey_area is None:
         return HttpResponseNotFound("No such survey area")
     survey_area.delete()
-    return JsonResponse({"date": survey_area.id})
+    return JsonResponse({"data": survey_area.id})
 
 
 def del_user(request):
@@ -200,34 +200,17 @@ def del_user(request):
     if user is None:
         return HttpResponseNotFound("No such user")
     user.delete()
-    return JsonResponse({"date": user.id})
-
-
-# def login(request):
-#     if request.method != "POST":
-#         return HttpResponseNotAllowed(["POST"])
-#     body = json.loads(request.body)
-#     user = get_user(body["login"])
-#     if user is None:
-#         return HttpResponseNotFound("No such user")
-#     if user.password == body["password"]:
-#         session = get_session(user_id=user.id)
-#         if session is None:
-#             session_code = create_session_code()
-#             session_list = Session(id=session_code, user_id=user.id)
-#             session_list.save()
-#             return JsonResponse({"session_id": session_list.id})
-#         return JsonResponse({"session_id": session.id})
-#     return HttpResponseForbidden("Wrong password")
+    return JsonResponse({"data": user.id})
 
 
 def login(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
-    user = get_user(request.POST["login"])
+    body = json.loads(request.body)
+    user = get_user(body["login"])
     if user is None:
         return HttpResponseNotFound("No such user")
-    if user.password == request.POST["password"]:
+    if user.password == body["password"]:
         session = get_session(user_id=user.id)
         if session is None:
             session_code = create_session_code()
@@ -238,53 +221,27 @@ def login(request):
     return HttpResponseForbidden("Wrong password")
 
 
-# def singup(request):
-#     if request.method != "POST":
-#         return HttpResponseNotAllowed(["POST"])
-#     body = json.loads(request.body)
-#     user = get_user(body["login"])
-#     if user is None:
-#         user = User(
-#             id=body["id"],
-#             name=body["name"],
-#             login=body["login"],
-#             password=body["password"],
-#         )
-#         user.save()
-#         return JsonResponse({"date": body})
-#     return HttpResponseBadRequest("Such user exists")
-
-
 def singup(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
-    user = get_user(request.POST["login"])
+    body = json.loads(request.body)
+    user = get_user(body["login"])
     if user is None:
         user = User(
-            name=request.POST["name"],
-            login=request.POST["login"],
-            password=request.POST["password"],
+            name=body["name"],
+            login=body["login"],
+            password=body["password"],
         )
         user.save()
-        return JsonResponse({"date": request.POST})
+        return JsonResponse({"data": body})
     return HttpResponseBadRequest("Such user exists")
-
-
-# def logout(request):
-#     if request.method != "POST":
-#         return HttpResponseNotAllowed(["POST"])
-#     body = json.loads(request.body)
-#     session = get_session(body["session_id"])
-#     if session is None:
-#         return HttpResponseBadRequest("User already logout")
-#     session.delete()
-#     return JsonResponse({"data": "d"})
 
 
 def logout(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
-    session = get_session(request.POST["session_id"])
+    body = json.loads(request.body)
+    session = get_session(body["session_id"])
     if session is None:
         return HttpResponseBadRequest("User already logout")
     session.delete()
@@ -310,5 +267,5 @@ def edit_survey(request):
             type=body["type"]
         )
         # fmt: on
-        return JsonResponse({"date": survey})
+        return JsonResponse({"data": survey})
     return HttpResponseForbidden("")
