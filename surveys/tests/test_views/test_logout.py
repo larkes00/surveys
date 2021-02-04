@@ -32,9 +32,9 @@ def test_successful_logout(client):
 
 @pytest.mark.django_db
 def test_unsuccessful_logout(client):
-    response = client.post(  # fmt off
+    response = client.post(  # fmt: off
         get_logout_url(),
         {"session_id": "21daxz"},
         content_type="application/json",
-    )  # fmt on
+    )  # fmt: on
     assert response.status_code == 400

@@ -22,8 +22,8 @@ def make_question():
 
 
 def make_answer():
-    answer = Answer(id=1000, content="Fine", question_id=1000).save()
-    answer = Answer(id=1001, content="I'm home", question_id=1001).save()
+    Answer(id=1000, content="Fine", question_id=1000).save()
+    Answer(id=1001, content="I'm home", question_id=1001).save()
 
 
 def make_survey_area():
@@ -31,7 +31,9 @@ def make_survey_area():
 
 
 def make_survey():
-    Survey(id=1000, name="Survey", author_id=1000, area_id=1000, type="Formal").save()
+    # fmt: off
+    Survey(id=1000, name="Survey", author_id=1000, area_id=1000, type="Formal").save()  # noqa: E501
+    # fmt: on
 
 
 def make_survey_question():
