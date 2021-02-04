@@ -33,7 +33,6 @@ def new_survey(request):
         return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
     survey_obj = Survey(
-        id=body["id"],
         author_id=body["author_id"],
         area_id=body["area_id"],
         name=body["name"],
@@ -56,7 +55,7 @@ def del_survey(request):
     if survey_obj.author_id == session.user_id:
         survey_obj.delete()
         return JsonResponse({"data": survey_obj.id})
-    return HttpResponseForbidden("You cannot delete someone else''s survey")
+    return HttpResponseForbidden("You cannot delete someone else's survey")
 
 
 def edit_survey(request):
