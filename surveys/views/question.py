@@ -37,7 +37,7 @@ def del_question(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
-    session = get_session(body["sesion_id"])
+    session = get_session(body["session_id"])
     if session is None:
         return HttpResponse("User is not logged in", status=401)
     question = get_question(body["question_id"])
