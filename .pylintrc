@@ -4,3 +4,6 @@ disable=missing-docstring
 [MASTER]
 load-plugins=pylint_django
 django-settings-module=surveys.settings
+
+[SIMILARITIES]
+ignore-imports=yes
