@@ -17,7 +17,7 @@ def get_survey(survey_id):
     try:
         survey = Survey.objects.get(id=survey_id)
     except Survey.DoesNotExist:
-        pass
+        return None
     else:
         return survey
 
@@ -29,7 +29,7 @@ def get_session(session_id=None, user_id=None):
         else:
             session = Session.objects.get(user_id=user_id)
     except Session.DoesNotExist:
-        pass
+        return None
     else:
         return session
 
@@ -38,7 +38,7 @@ def get_answer(answer_id):
     try:
         answer = Answer.objects.get(id=answer_id)
     except Answer.DoesNotExist:
-        pass
+        return None
     else:
         return answer
 
@@ -47,7 +47,7 @@ def get_question(question_id):
     try:
         question = Question.objects.get(id=question_id)
     except Question.DoesNotExist:
-        pass
+        return None
     else:
         return question
 
@@ -58,7 +58,7 @@ def get_survey_question(question_id, survey_id=None):
             survey_id=survey_id, question_id=question_id
         )
     except SurveyQuestion.DoesNotExist:
-        pass
+        return None
     else:
         return survey_question
 
@@ -67,7 +67,7 @@ def get_survey_area(survey_area_id):
     try:
         survey_area = SurveyArea.objects.get(id=survey_area_id)
     except SurveyArea.DoesNotExist:
-        pass
+        return None
     else:
         return survey_area
 
@@ -76,7 +76,7 @@ def get_user(login):
     try:
         user = User.objects.get(login=login)
     except User.DoesNotExist:
-        pass
+        return None
     else:
         return user
 
