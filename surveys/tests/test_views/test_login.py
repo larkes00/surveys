@@ -1,7 +1,8 @@
 from django import urls
 import pytest
 
-from surveys.tests.test_views.helpers import make_user
+from surveys.models import Session
+from surveys.tests.test_views.helpers import create_user, make_user
 
 
 def setup():
@@ -20,12 +21,16 @@ def test_login_only_post(client):
 
 @pytest.mark.django_db
 def test_succesful_login(client):
+    user = create_user(login='john_doe', password="12345")
     response = client.post(
         get_login_url(),
-        {"login": "Bad12345", "password": "12345"},
+        {"login": "john_doe", "password": "12345"},
         content_type="application/json",
     )
     assert response.status_code == 200
+
+    user_session = Session.objects.get(user_id=user.id)
+    assert user_session is not None
 
 
 @pytest.mark.django_db

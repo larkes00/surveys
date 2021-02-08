@@ -7,6 +7,12 @@ from surveys.models import SurveyQuestion
 from surveys.models import User
 
 
+def create_user(login: str, password: str = "12345", name: str = "John"):
+    user = User(login=login, password=password, name=name)
+    user.save()
+    return user
+
+
 def make_user():
     User(id=1000, login="Bad12345", password="12345", name="Bruce").save()
     User(id=1001, login="Good12345", password="12345", name="Bob").save()
