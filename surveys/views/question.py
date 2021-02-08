@@ -8,7 +8,6 @@ from django.http import JsonResponse
 
 from surveys.logic import get_question
 from surveys.logic import get_session
-from surveys.logic import get_survey
 from surveys.logic import get_survey_question
 from surveys.logic import parse_questions
 from surveys.models import Question
@@ -43,13 +42,12 @@ def del_question(request):
     question = get_question(body["question_id"])
     if question is None:
         return HttpResponseNotFound("No such question")
-    survey_obj = get_survey(body["survey_id"])
-    survey_question = get_survey_question(question.id, survey_obj.id)
-    if survey_question is None:
-        if session.user_id == question.author_id:
-            question.delete()
-            return JsonResponse({"data": question.id})
-        return HttpResponseForbidden("You are not the owner of the question")
-    return HttpResponseForbidden(  # fmt: off
-        "You cannot delete a question related to surveys"
-    )  # fmt: on
+    survey_question = get_survey_question(question.id)
+    if survey_question is not None:
+        return HttpResponseForbidden(  # fmt: off
+            "You cannot delete a question related to surveys"
+        )  # fmt: on
+    if session.user_id == question.author_id:
+        question.delete()
+        return JsonResponse({"data": question.id})
+    return HttpResponseForbidden("You are not the owner of the question")
