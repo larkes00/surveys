@@ -3,6 +3,7 @@ from surveys.models import Question
 from surveys.models import Session
 from surveys.models import Survey
 from surveys.models import SurveyArea
+from surveys.models import SurveyQuestion
 from surveys.models import User
 
 
@@ -17,8 +18,15 @@ def make_session():
 
 
 def make_question():
-    Question(id=1000, content="How are you?", correct_answer_id=1000).save()
-    Question(id=1001, content="Where are you?", correct_answer_id=1001).save()
+    Question(
+        id=1000, content="How are you?", correct_answer_id=1000, author_id=1000
+    ).save()
+    Question(
+        id=1001,
+        content="Where are you?",
+        correct_answer_id=1001,
+        author_id=1001,  # noqa: E501
+    ).save()
 
 
 def make_answer():
@@ -28,13 +36,15 @@ def make_answer():
 
 def make_survey_area():
     SurveyArea(id=1000, name="Something").save()
+    SurveyArea(id=1001, name="Good").save()
 
 
 def make_survey():
     # fmt: off
     Survey(id=1000, name="Survey", author_id=1000, area_id=1000, type="Formal").save()  # noqa: E501
+    Survey(id=1001, name="Good", author_id=1001, area_id=1001, type="Test").save()  # noqa: E501
     # fmt: on
 
 
 def make_survey_question():
-    SurveyArea(survey_id=1001, question_id=1001).save()
+    SurveyQuestion.objects.create(id=1000, question_id=1001, survey_id=1001)
