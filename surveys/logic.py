@@ -4,6 +4,7 @@ from surveys.models import Answer
 from surveys.models import Question
 from surveys.models import Session
 from surveys.models import Survey
+from surveys.models import SurveyArea
 from surveys.models import SurveyQuestion
 from surveys.models import User
 
@@ -51,7 +52,7 @@ def get_question(question_id):
         return question
 
 
-def get_survey_question(question_id, survey_id):
+def get_survey_question(question_id, survey_id=None):
     try:
         survey_question = SurveyQuestion.objects.get(
             survey_id=survey_id, question_id=question_id
@@ -64,8 +65,8 @@ def get_survey_question(question_id, survey_id):
 
 def get_survey_area(survey_area_id):
     try:
-        survey_area = SurveyQuestion.objects.get(id=survey_area_id)
-    except SurveyQuestion.DoesNotExist:
+        survey_area = SurveyArea.objects.get(id=survey_area_id)
+    except SurveyArea.DoesNotExist:
         pass
     else:
         return survey_area

@@ -1,6 +1,7 @@
-from surveys.tests.test_views.helpers import make_user
-import pytest
 from django import urls
+import pytest
+
+from surveys.tests.test_views.helpers import make_user
 
 
 def setup():
