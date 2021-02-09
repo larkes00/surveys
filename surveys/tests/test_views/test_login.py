@@ -2,11 +2,7 @@ from django import urls
 import pytest
 
 from surveys.models import Session
-from surveys.tests.test_views.helpers import create_user, make_user
-
-
-def setup():
-    make_user()
+from surveys.tests.test_views.helpers import create_user
 
 
 def get_login_url():
@@ -20,11 +16,11 @@ def test_login_only_post(client):
 
 
 @pytest.mark.django_db
-def test_succesful_login(client):
-    user = create_user(login='john_doe', password="12345")
+def test_successful_login(client):
+    user = create_user(login="Bad12345", password="12345")
     response = client.post(
         get_login_url(),
-        {"login": "john_doe", "password": "12345"},
+        {"login": "Bad12345", "password": "12345"},
         content_type="application/json",
     )
     assert response.status_code == 200
@@ -35,6 +31,7 @@ def test_succesful_login(client):
 
 @pytest.mark.django_db
 def test_wrong_login(client):
+    create_user(login="Bad12345", password="12345")
     response = client.post(
         get_login_url(),
         {"login": "-1", "password": "qq"},
@@ -45,9 +42,10 @@ def test_wrong_login(client):
 
 @pytest.mark.django_db
 def test_login_wrong_password(client):
+    create_user(login="Bad12345", password="12345")
     response = client.post(
         get_login_url(),
-        {"login": "Bad12345", "password": "zzzzzz"},
+        {"login": "Bad12345", "password": "wrong_password"},
         content_type="application/json",
     )
     assert response.status_code == 403
