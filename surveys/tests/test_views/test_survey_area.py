@@ -1,11 +1,7 @@
 from django import urls
 import pytest
 
-from surveys.tests.test_views.helpers import make_survey_area
-
-
-def setup():
-    make_survey_area()
+from surveys.tests.test_views.helpers import create_survey_area
 
 
 def get_survey_area_list_url():
@@ -22,55 +18,56 @@ def get_survey_area_delete_url():
 
 @pytest.mark.django_db
 def test_survey_area_list_get_only(client):
-    respone = client.post(
-        get_survey_area_list_url(), {}, content_type="appication/json"
+    response = client.post(
+        get_survey_area_list_url(), {}, content_type="application/json"
     )
-    assert respone.status_code == 405
+    assert response.status_code == 405
 
 
 @pytest.mark.django_db
 def test_survey_area_create_post_only(client):
-    respone = client.get(get_survey_area_create_url())
-    assert respone.status_code == 405
+    response = client.get(get_survey_area_create_url())
+    assert response.status_code == 405
 
 
 @pytest.mark.django_db
 def test_survey_area_delete_post_only(client):
-    respone = client.get(get_survey_area_delete_url())
-    assert respone.status_code == 405
+    response = client.get(get_survey_area_delete_url())
+    assert response.status_code == 405
 
 
 @pytest.mark.django_db
 def test_survey_area_get_list(client):
-    respone = client.get(get_survey_area_list_url())
-    assert respone.status_code == 200
+    response = client.get(get_survey_area_list_url())
+    assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_survey_area_create_successful(client):
-    respone = client.post(
+    response = client.post(
         get_survey_area_create_url(),
         {"id": 1004, "name": "Something"},
         content_type="application/json",
     )
-    assert respone.status_code == 200
+    assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_survey_area_delete_successful(client):
-    respone = client.post(
+    create_survey_area(name="Anything")
+    response = client.post(
         get_survey_area_delete_url(),
-        {"survey_area_id": 1000},
+        {"survey_area_id": 1},
         content_type="application/json",
     )
-    assert respone.status_code == 200
+    assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_survey_area_delete_unsuccessful(client):
-    respone = client.post(
+    response = client.post(
         get_survey_area_delete_url(),
-        {"survey_area_id": 1002},
+        {"survey_area_id": 1},
         content_type="application/json",
     )
-    assert respone.status_code == 404
+    assert response.status_code == 404

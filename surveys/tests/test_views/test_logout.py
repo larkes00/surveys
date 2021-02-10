@@ -17,7 +17,7 @@ def test_logout_only_post(client):
 
 @pytest.mark.django_db
 def test_successful_logout(client):
-    create_user(login="Bad12345", password="12345")
+    s = create_user(login="Bad12345", password="12345")
     create_session(session_id="test_session_id", user_id=1)
     response = client.post(
         get_logout_url(),

@@ -43,10 +43,12 @@ def create_survey_area(name: str):
     return survey_area
 
 
+# fmt: off
 def create_survey(name: str, author_id: int, area_id: int, type_survey: str = "Formal"):  # noqa: E501
     survey = Survey(name=name, author_id=author_id, area_id=area_id, type=type_survey)  # noqa: E501
     survey.save()
     return survey
+# fmt: on
 
 
 def create_survey_question(survey_id: int, question_id: int):

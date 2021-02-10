@@ -1,11 +1,7 @@
 from django import urls
 import pytest
 
-from surveys.tests.test_views.helpers import make_user
-
-
-def setup():
-    make_user()
+from surveys.tests.test_views.helpers import create_user
 
 
 def get_singup_url():
@@ -30,6 +26,7 @@ def test_successful_singup(client):
 
 @pytest.mark.django_db
 def test_unsuccessful_singup(client):
+    create_user(login="Bad12345")
     response = client.post(  # fmt: off
         get_singup_url(),
         {"login": "Bad12345", "password": "12345", "name": "Bruce"},
