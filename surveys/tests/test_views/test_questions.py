@@ -1,23 +1,13 @@
 from django import urls
 import pytest
 
-from surveys.tests.test_views.helpers import make_answer
-from surveys.tests.test_views.helpers import make_question
-from surveys.tests.test_views.helpers import make_session
-from surveys.tests.test_views.helpers import make_survey
-from surveys.tests.test_views.helpers import make_survey_area
-from surveys.tests.test_views.helpers import make_survey_question
-from surveys.tests.test_views.helpers import make_user
-
-
-def setup():
-    make_answer()
-    make_question()
-    make_user()
-    make_session()
-    make_survey_area()
-    make_survey()
-    make_survey_question()
+from surveys.tests.test_views.helpers import create_answer
+from surveys.tests.test_views.helpers import create_question
+from surveys.tests.test_views.helpers import create_session
+from surveys.tests.test_views.helpers import create_survey
+from surveys.tests.test_views.helpers import create_survey_area
+from surveys.tests.test_views.helpers import create_survey_question
+from surveys.tests.test_views.helpers import create_user
 
 
 def question_list_url():
@@ -46,9 +36,10 @@ def test_questions_list(client):
 
 @pytest.mark.django_db
 def test_question_create(client):
+    create_answer(content="Nothing", question_id=1)
     respone = client.post(
         question_create_url(),
-        {"content": "What is it?", "correct_answer_id": 1000},
+        {"content": "What is it?", "correct_answer_id": 1},
         content_type="application/json",
     )
     assert respone.status_code == 200
@@ -66,10 +57,12 @@ def test_question_delete_session_error(client):
 
 @pytest.mark.django_db
 def test_delete_question_not_exist(client):
+    create_user(login="Bad12345", password="12345")
+    create_session(session_id="test_session_id", user_id=1)
     respone = client.post(
         question_delete_url(),
         {  # fmt: off
-            "session_id": "c101a895-f2c0-43a9-ac3e-a54f7f334d56",
+            "session_id": "test_session_id",
             "question_id": 0,
         },  # fmt: on
         content_type="application/json",
@@ -79,11 +72,18 @@ def test_delete_question_not_exist(client):
 
 @pytest.mark.django_db
 def test_delete_question_used(client):
+    create_answer(content="Fine", question_id=1)
+    create_question(content="How are you?", author_id=1, correct_answer_id=1)
+    create_user(login="Bad12345", password="12345")
+    create_session(session_id="test_session_id", user_id=1)
+    create_survey_area(name="Anything")
+    create_survey(name="Survey", author_id=1, area_id=1)
+    create_survey_question(survey_id=1, question_id=1)
     respone = client.post(
         question_delete_url(),
         {  # fmt: off
-            "session_id": "c101a895-f2c0-43a9-ac3e-a54f7f334d56",
-            "question_id": 1001,
+            "session_id": "test_session_id",
+            "question_id": 1,
         },  # fmt: on
         content_type="application/json",
     )
@@ -92,11 +92,15 @@ def test_delete_question_used(client):
 
 @pytest.mark.django_db
 def test_delete_question_is_author(client):
+    create_user(login="Bad12345", password="12345")
+    create_session(session_id="test_session_id", user_id=1)
+    create_answer(content="Fine", question_id=1)
+    create_question(content="How are you?", author_id=1, correct_answer_id=1)
     respone = client.post(
         question_delete_url(),
         {  # fmt: off
-            "session_id": "c101a895-f2c0-43a9-ac3e-a54f7f334d56",
-            "question_id": 1000,
+            "session_id": "test_session_id",
+            "question_id": 1,
         },  # fmt: on
         content_type="application/json",
     )
@@ -105,11 +109,16 @@ def test_delete_question_is_author(client):
 
 @pytest.mark.django_db
 def test_delete_question_not_author(client):
+    create_user(id=1, login="Bad12345")
+    create_user(id=2, login="Good12345")
+    create_session(session_id="test_session_id", user_id=1)
+    create_answer(content="Fine", question_id=1)
+    create_question(content="How are you?", author_id=2, correct_answer_id=1)
     respone = client.post(
         question_delete_url(),
         {  # fmt: off
-            "session_id": "c101a895-f2c0-43a9-ac3e-a54f7f334d56",
-            "question_id": 1001,
+            "session_id": "test_session_id",
+            "question_id": 1,
         },  # fmt: on
         content_type="application/json",
     )
