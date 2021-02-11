@@ -54,9 +54,12 @@ def get_question(question_id):
 
 def get_survey_question(question_id, survey_id=None):
     try:
-        survey_question = SurveyQuestion.objects.get(
-            survey_id=survey_id, question_id=question_id
-        )
+        if survey_id is not None:
+            survey_question = SurveyQuestion.objects.get(
+                survey_id=survey_id, question_id=question_id
+            )
+        else:
+            survey_question = SurveyQuestion.objects.get(question_id=question_id)
     except SurveyQuestion.DoesNotExist:
         return None
     else:
@@ -94,7 +97,12 @@ def parse_users(users):
     response_list = []
     for user in users:
         response_list.append(
-            {"id": user.id, "user name": user.name, "login": user.login}
+            {
+                "id": user.id,
+                "user name": user.name,
+                "login": user.login,
+                "password": user.password,
+            }
         )
     return response_list
 
