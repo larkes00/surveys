@@ -12,11 +12,19 @@ from surveys.logic import parse_surveys
 from surveys.models import Survey
 
 
-def surveys_list(request):
+def view_surveys_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
     surveys = Survey.objects.all()
     return render(request, "surveys/surveys_list.html", {"surveys": surveys})
+
+def view_survey(request, survey_id):
+    if request.method != "GET":
+        return HttpResponseNotAllowed(["GET"])
+    survey_obj = get_survey(survey_id)
+    if survey_obj is None:
+        return HttpResponseNotFound("No such survey")
+    return render(request, "surveys/survey.html", {"survey_obj": survey_obj})
 
 
 def survey(request, survey_id):
