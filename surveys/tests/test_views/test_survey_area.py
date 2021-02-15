@@ -1,6 +1,7 @@
 from django import urls
 import pytest
 
+from surveys.logic import get_survey_area
 from surveys.tests.test_views.helpers import create_survey_area
 
 
@@ -38,29 +39,36 @@ def test_survey_area_delete_post_only(client):
 
 @pytest.mark.django_db
 def test_survey_area_get_list(client):
+    create_survey_area(id=1, name="Anything")
+    create_survey_area(id=2, name="Nothing")
     response = client.get(get_survey_area_list_url())
     assert response.status_code == 200
+    assert response.json()["data"]
 
 
 @pytest.mark.django_db
 def test_survey_area_create_successful(client):
     response = client.post(
         get_survey_area_create_url(),
-        {"id": 1004, "name": "Something"},
+        {"name": "Something"},
         content_type="application/json",
     )
     assert response.status_code == 200
+    survey_area = get_survey_area(survey_area_id=1)
+    assert survey_area is not None
 
 
 @pytest.mark.django_db
 def test_survey_area_delete_successful(client):
-    create_survey_area(name="Anything")
+    survey_area = create_survey_area(name="Anything")
     response = client.post(
         get_survey_area_delete_url(),
         {"survey_area_id": 1},
         content_type="application/json",
     )
     assert response.status_code == 200
+    survey_area_obj = get_survey_area(survey_area_id=survey_area.id)
+    assert survey_area_obj is None
 
 
 @pytest.mark.django_db

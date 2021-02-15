@@ -1,8 +1,7 @@
+from surveys.logic import get_user
 from django import urls
 import pytest
 
-from surveys.logic import parse_users
-from surveys.models import User
 from surveys.tests.test_views.helpers import create_user
 
 
@@ -24,7 +23,8 @@ def test_successful_singup(client):
         content_type="application/json",
     )
     assert response.status_code == 200
-    print(parse_users(User.objects.all()))
+    user = get_user(login="RedWhite")
+    assert user is not None
 
 
 @pytest.mark.django_db
@@ -36,3 +36,5 @@ def test_unsuccessful_singup(client):
         content_type="application/json",
     )  # fmt: on
     assert response.status_code == 400
+    user = get_user(login="Bad12345")
+    assert user is not None

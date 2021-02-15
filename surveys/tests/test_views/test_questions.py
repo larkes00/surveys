@@ -1,6 +1,7 @@
 from django import urls
 import pytest
 
+from surveys.logic import get_question
 from surveys.tests.test_views.helpers import create_answer
 from surveys.tests.test_views.helpers import create_question
 from surveys.tests.test_views.helpers import create_session
@@ -73,7 +74,9 @@ def test_delete_question_not_exist(client):
 @pytest.mark.django_db
 def test_delete_question_used(client):
     create_answer(content="Fine", question_id=1)
-    create_question(content="How are you?", author_id=1, correct_answer_id=1)
+    question = create_question(  # fmt: off
+        content="How are you?", author_id=1, correct_answer_id=1
+    )  # fmt: on
     create_user(login="Bad12345", password="12345")
     create_session(session_id="test_session_id", user_id=1)
     create_survey_area(name="Anything")
@@ -88,6 +91,8 @@ def test_delete_question_used(client):
         content_type="application/json",
     )
     assert respone.status_code == 403
+    question_obj = get_question(question_id=question.id)
+    assert question_obj is not None
 
 
 @pytest.mark.django_db
@@ -95,7 +100,9 @@ def test_delete_question_is_author(client):
     create_user(login="Bad12345", password="12345")
     create_session(session_id="test_session_id", user_id=1)
     create_answer(content="Fine", question_id=1)
-    create_question(content="How are you?", author_id=1, correct_answer_id=1)
+    question = create_question(  # fmt: off
+        content="How are you?", author_id=1, correct_answer_id=1
+    )  # fmt: on
     respone = client.post(
         question_delete_url(),
         {  # fmt: off
@@ -105,6 +112,8 @@ def test_delete_question_is_author(client):
         content_type="application/json",
     )
     assert respone.status_code == 200
+    question_obj = get_question(question_id=question.id)
+    assert question_obj is None
 
 
 @pytest.mark.django_db
@@ -113,7 +122,9 @@ def test_delete_question_not_author(client):
     create_user(id=2, login="Good12345")
     create_session(session_id="test_session_id", user_id=1)
     create_answer(content="Fine", question_id=1)
-    create_question(content="How are you?", author_id=2, correct_answer_id=1)
+    question = create_question(  # fmt: off
+        content="How are you?", author_id=2, correct_answer_id=1
+    )  # fmt: on
     respone = client.post(
         question_delete_url(),
         {  # fmt: off
@@ -123,3 +134,5 @@ def test_delete_question_not_author(client):
         content_type="application/json",
     )
     assert respone.status_code == 403
+    question_obj = get_question(question_id=question.id)
+    assert question_obj is not None
