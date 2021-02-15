@@ -17,9 +17,7 @@ def new_answer(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
-    answer = Answer(
-        id=body["id"], content=body["content"], question_id=body["question_id"]
-    )
+    answer = Answer(content=body["content"], question_id=body["question_id"])
     answer.save()
     return JsonResponse({"data": body})
 

@@ -25,7 +25,9 @@ def new_user(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
-    user = User(id=body["id"], name=body["name"])
+    user = User(  # fmt: off
+        name=body["name"], login=body["login"], password=body["password"]
+    )  # fmt: on
     user.save()
     return JsonResponse({"data": body})
 

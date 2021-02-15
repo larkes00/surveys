@@ -59,7 +59,9 @@ def get_survey_question(question_id, survey_id=None):
                 survey_id=survey_id, question_id=question_id
             )
         else:
-            survey_question = SurveyQuestion.objects.get(question_id=question_id)
+            survey_question = SurveyQuestion.objects.get(  # fmt: off
+                question_id=question_id
+            )  # fmt: on
     except SurveyQuestion.DoesNotExist:
         return None
     else:

@@ -20,7 +20,7 @@ def new_survey_area(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
-    survey_area = SurveyArea(id=body["id"], name=body["name"])
+    survey_area = SurveyArea(name=body["name"])
     survey_area.save()
     return JsonResponse({"data": body})
 
