@@ -1,15 +1,29 @@
 <!doctype html>
-<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <title>Surveys</title>
 </head>
+<html lang="en">
 <body>
-    {% for survey in survey_obj %}
-        <p>{{ survey.question.content }}</p>
+<script>
+    function onClick() {
+        console.log('before fetch')
+        fetch(
+            'http://localhost:8000/surveys/1/',
+            {
+                method: 'POST',
+                headers: new Headers(),
+                body: JSON.stringify({foo: "bar"})
+            }
+        ).then((res) => console.log(res))
+    }
+</script>
+    {% for question in questions %}
+        <p>{{ question.content }}</p>
     {% endfor %}
-</body>>
+    <button name="foo" value="foo" onclick="onClick()">Submit</button>
+</body>
 </html>
 

@@ -9,7 +9,7 @@ from django.shortcuts import render
 from surveys.logic import get_session
 from surveys.logic import get_survey
 from surveys.logic import parse_surveys
-from surveys.models import Survey
+from surveys.models import Survey, SurveyQuestion
 
 
 def view_surveys_list(request):
@@ -18,13 +18,17 @@ def view_surveys_list(request):
     surveys = Survey.objects.all()
     return render(request, "surveys/surveys_list.html", {"surveys": surveys})
 
+
 def view_survey(request, survey_id):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
     survey_obj = get_survey(survey_id)
     if survey_obj is None:
         return HttpResponseNotFound("No such survey")
-    return render(request, "surveys/survey.html", {"survey_obj": survey_obj})
+    questions = []
+    for survey_question in SurveyQuestion.objects.filter(survey_id=survey_id):
+        questions.append(survey_question.question)
+    return render(request, "surveys/survey.html", {"survey": survey_obj, "questions": questions})
 
 
 def survey(request, survey_id):
