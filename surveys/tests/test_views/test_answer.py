@@ -1,7 +1,8 @@
-from surveys.logic import get_answer
 from django import urls
 import pytest
 
+from surveys.logic import get_answer
+from surveys.logic import parse_answer
 from surveys.tests.test_views.helpers import create_question
 from surveys.tests.test_views.helpers import create_user
 
@@ -26,5 +27,5 @@ def test_answer_create(client):
         content_type="application/json",
     )
     assert response.status_code == 200
-    answer = get_answer(answer_id=1)
-    assert answer is not None
+    answer = parse_answer(get_answer(answer_id=1))
+    assert answer == {"id": 1, "content": "Bad", "question_id": 1}

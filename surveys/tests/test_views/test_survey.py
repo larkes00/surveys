@@ -2,6 +2,7 @@ from django import urls
 import pytest
 
 from surveys.logic import get_survey
+from surveys.logic import parse_surveys
 from surveys.tests.test_views.helpers import create_session
 from surveys.tests.test_views.helpers import create_survey
 from surveys.tests.test_views.helpers import create_survey_area
@@ -65,7 +66,13 @@ def test_successful_get_one_survey(client):
     create_survey(name="Survey", author_id=1, area_id=1)
     response = client.get(get_survey_get_one_url(1))
     assert response.status_code == 200
-    assert response.json()["data"]
+    assert response.json()["data"] == {
+        "id": 1,
+        "name": "Survey",
+        "author_id": 1,
+        "area_id": 1,
+        "type": "Formal",
+    }
 
 
 @pytest.mark.django_db
@@ -89,8 +96,14 @@ def test_create_survey(client):
         content_type="application/json",
     )
     assert response.status_code == 200
-    survey_obj = get_survey(survey_id=1)
-    assert survey_obj is not None
+    survey_obj = parse_surveys(get_survey(survey_id=1))
+    assert survey_obj == {
+        "id": 1,
+        "author_id": 1,
+        "area_id": 1,
+        "name": "I don't know",
+        "type": "Formal",
+    }
 
 
 @pytest.mark.django_db
@@ -115,8 +128,6 @@ def test_delete_survey_no_such_survey(client):
         content_type="application/json",
     )
     assert response.status_code == 404
-    survey_obj = get_survey(survey_id=1)
-    assert survey_obj is not None
 
 
 @pytest.mark.django_db
@@ -155,5 +166,11 @@ def test_no_accees_delete_survey(client):
         content_type="application/json",
     )
     assert response.status_code == 403
-    survey_obj = get_survey(survey_id=1)
-    assert survey_obj is not None
+    survey_obj = parse_surveys(get_survey(survey_id=1))
+    assert survey_obj == {
+        "id": 1,
+        "name": "Survey",
+        "author_id": 1,
+        "area_id": 1,
+        "type": "Formal",
+    }

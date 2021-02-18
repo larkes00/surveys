@@ -2,6 +2,7 @@ from django import urls
 import pytest
 
 from surveys.logic import get_question
+from surveys.logic import parse_questions
 from surveys.tests.test_views.helpers import create_answer
 from surveys.tests.test_views.helpers import create_question
 from surveys.tests.test_views.helpers import create_session
@@ -91,8 +92,12 @@ def test_delete_question_used(client):
         content_type="application/json",
     )
     assert respone.status_code == 403
-    question_obj = get_question(question_id=question.id)
-    assert question_obj is not None
+    question_obj = parse_questions(get_question(question_id=question.id))
+    assert question_obj == {  # fmt: off
+        "id": 1,
+        "question name": "How are you?",
+        "author_id": 1,
+    }  # fmt: on
 
 
 @pytest.mark.django_db
@@ -134,5 +139,9 @@ def test_delete_question_not_author(client):
         content_type="application/json",
     )
     assert respone.status_code == 403
-    question_obj = get_question(question_id=question.id)
-    assert question_obj is not None
+    question_obj = parse_questions(get_question(question_id=question.id))
+    assert question_obj == {  # fmt: off
+        "id": 1,
+        "question name": "How are you?",
+        "author_id": 2,
+    }  # fmt: on

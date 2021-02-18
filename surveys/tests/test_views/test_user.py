@@ -22,4 +22,7 @@ def test_user_list_successful(client):
     create_user(id=2, login="Good12345")
     response = client.get(get_user_list_url())
     assert response.status_code == 200
-    assert response.json()["data"]
+    assert response.json()["data"] == [
+        {"id": 1, "login": "Bad12345", "password": "12345", "name": "John"},
+        {"id": 2, "login": "Good12345", "password": "12345", "name": "John"},
+    ]

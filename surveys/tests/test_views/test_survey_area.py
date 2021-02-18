@@ -2,6 +2,7 @@ from django import urls
 import pytest
 
 from surveys.logic import get_survey_area
+from surveys.logic import parse_survey_area
 from surveys.tests.test_views.helpers import create_survey_area
 
 
@@ -43,7 +44,10 @@ def test_survey_area_get_list(client):
     create_survey_area(id=2, name="Nothing")
     response = client.get(get_survey_area_list_url())
     assert response.status_code == 200
-    assert response.json()["data"]
+    assert response.json()["data"] == [
+        {"id": 1, "name": "Anything"},
+        {"id": 2, "name": "Nothing"},
+    ]
 
 
 @pytest.mark.django_db
@@ -54,8 +58,8 @@ def test_survey_area_create_successful(client):
         content_type="application/json",
     )
     assert response.status_code == 200
-    survey_area = get_survey_area(survey_area_id=1)
-    assert survey_area is not None
+    survey_area = parse_survey_area(get_survey_area(survey_area_id=1))
+    assert survey_area == {"id": 1, "name": "Something"}
 
 
 @pytest.mark.django_db
