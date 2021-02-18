@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from django.http import HttpResponseNotAllowed
 from django.http import JsonResponse
@@ -14,7 +15,8 @@ def new_complete_survey(request):
         user_id=body["user_id"],
         survey_id=body["survey_id"],
         question_id=body["question_id"],
-        answer_id=body["answer"],
+        answer_id=body["answer_id"],
+        completed_at=datetime.datetime.utcnow()
     )
     complete_survey.save()
     return JsonResponse({"data": body})

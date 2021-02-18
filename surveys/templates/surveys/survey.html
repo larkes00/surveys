@@ -15,20 +15,24 @@
             {
                 method: 'POST',
                 headers: new Headers(),
-                body: JSON.stringify({foo: "bar"})
+                body: JSON.stringify({survey_id: {{ survey.id }}, user_id: 1, question_id: 1, answer_id: 1})
             }
         ).then((res) => console.log(res))
     }
 </script>
     {% for question in questions %}
+        <div class="question" id="{{ question.id }}">
         <p>{{ question.content }}</p>
-        {% for answer in answers %}
-            {% if answer.question_id == question.id %}
-            <input type="checkbox">
-                {{ answer.content }}
+            {% for answer in answers %}
+                {% if answer.question_id == question.id %}
+                <div class="answer" id="{{ answer.id }}">
+                    <input type="checkbox">
+                    {{ answer.content }}
                 <p></p>
+                </div>
             {% endif %}
         {% endfor %}
+        </div>
     {% endfor %}
     <p><button name="foo" value="foo" onclick="onClick()">Submit</button></p>
 </body>
