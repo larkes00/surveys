@@ -24,6 +24,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("view/surveys/", views.view_surveys_list, name="surveys"),
     path("view/surveys/<int:survey_id>/", views.view_survey, name="survey"),
+    path(
+        "complete_survey/create/", views.new_complete_survey, name="new_complete_survey"
+    ),
     path("surveys/<int:survey_id>/", views.survey, name="survey"),
     path("users/", views.user_list, name="users"),
     path("surveyareas/", views.survey_areas_list, name="survey_areas"),

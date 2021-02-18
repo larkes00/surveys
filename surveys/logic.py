@@ -90,42 +90,69 @@ def parse_surveys(surveys):
     return {
         "id": surveys.id,
         "author_id": surveys.author_id,
-        "survey name": surveys.name,
+        "area_id": surveys.area_id,
+        "name": surveys.name,
         "type": surveys.type,
     }
 
 
 def parse_users(users):
     response_list = []
-    for user in users:
-        response_list.append(
-            {
-                "id": user.id,
-                "user name": user.name,
-                "login": user.login,
-                "password": user.password,
-            }
-        )
+    try:
+        for user in users:
+            response_list.append(
+                {
+                    "id": user.id,
+                    "name": user.name,
+                    "login": user.login,
+                    "password": user.password,
+                }
+            )
+    except TypeError:
+        return {
+            "id": users.id,
+            "name": users.name,
+            "login": users.login,
+            "password": users.password,
+        }
     return response_list
 
 
 def parse_questions(questions):
     response_list = []
-    for question in questions:
-        response_list.append(
-            {
-                "id": question.id,
-                "question name": question.content,
-                "author_id": question.author_id,
-            }
-        )
+    try:
+        for question in questions:
+            response_list.append(
+                {
+                    "id": question.id,
+                    "question name": question.content,
+                    "author_id": question.author_id,
+                }
+            )
+    except TypeError:
+        return {
+            "id": questions.id,
+            "question name": questions.content,
+            "author_id": questions.author_id,
+        }
     return response_list
 
 
 def parse_survey_area(survey_areas):
     response_list = []
-    for survey_area in survey_areas:
-        response_list.append(  # fmt: off
-            {"id": survey_area.id, "question name": survey_area.name}
-        )  # fmt: on
+    try:
+        for survey_area in survey_areas:
+            response_list.append(  # fmt: off
+                {"id": survey_area.id, "name": survey_area.name}
+            )  # fmt: on
+    except TypeError:
+        return {"id": survey_areas.id, "name": survey_areas.name}
     return response_list
+
+
+def parse_answer(answer):
+    return {
+        "id": answer.id,
+        "content": answer.content,
+        "question_id": answer.question_id,
+    }
