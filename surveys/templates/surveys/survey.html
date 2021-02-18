@@ -11,7 +11,7 @@
     function onClick() {
         console.log('before fetch')
         fetch(
-            'http://localhost:8000/surveys/1/',
+            'http://localhost:8000/complete_survey/create/',
             {
                 method: 'POST',
                 headers: new Headers(),
@@ -22,8 +22,15 @@
 </script>
     {% for question in questions %}
         <p>{{ question.content }}</p>
+        {% for answer in answers %}
+            {% if answer.question_id == question.id %}
+            <input type="checkbox">
+                {{ answer.content }}
+                <p></p>
+            {% endif %}
+        {% endfor %}
     {% endfor %}
-    <button name="foo" value="foo" onclick="onClick()">Submit</button>
+    <p><button name="foo" value="foo" onclick="onClick()">Submit</button></p>
 </body>
 </html>
 
