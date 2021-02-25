@@ -7,7 +7,7 @@ from surveys.tests.test_views.helpers import create_user
 
 
 def get_singup_url():
-    return urls.reverse("singup")
+    return urls.reverse("signup")
 
 
 @pytest.mark.django_db

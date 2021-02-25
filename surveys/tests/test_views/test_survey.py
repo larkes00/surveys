@@ -9,8 +9,8 @@ from surveys.tests.test_views.helpers import create_survey_area
 from surveys.tests.test_views.helpers import create_user
 
 
-def get_survey_list_url():
-    return urls.reverse("surveys")
+# def get_survey_list_url():
+#     return urls.reverse("view_surveys")
 
 
 def get_survey_get_one_url(survey_id):
@@ -25,12 +25,12 @@ def get_survey_delete_url():
     return urls.reverse("del_survey")
 
 
-@pytest.mark.django_db
-def test_survey_list_only_get(client):
-    response = client.post(  # fmt off
-        get_survey_list_url(), {}, content_type="application/json"
-    )  # fmt on
-    assert response.status_code == 405
+# @pytest.mark.django_db
+# def test_survey_list_only_get(client):
+#     response = client.post(  # fmt off
+#         get_survey_list_url(), {}, content_type="application/json"
+#     )  # fmt on
+#     assert response.status_code == 405
 
 
 @pytest.mark.django_db
@@ -53,10 +53,10 @@ def test_survey_delete_only_post(client):
     assert response.status_code == 405
 
 
-@pytest.mark.django_db
-def test_survey_list(client):
-    response = client.get(get_survey_list_url())
-    assert response.status_code == 200
+# @pytest.mark.django_db
+# def test_survey_list(client):
+#     response = client.get(get_survey_list_url())
+#     assert response.status_code == 200
 
 
 @pytest.mark.django_db
