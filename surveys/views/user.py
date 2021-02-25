@@ -5,6 +5,7 @@ from django.http import HttpResponseForbidden
 from django.http import HttpResponseNotAllowed
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
+from django.shortcuts import render
 
 from surveys.logic import create_session_code
 from surveys.logic import get_session
@@ -12,6 +13,18 @@ from surveys.logic import get_user
 from surveys.logic import parse_users
 from surveys.models import Session
 from surveys.models import User
+
+
+def view_login(request):
+    if request.method != "GET":
+        return HttpResponseNotAllowed(["GET"])
+    return render(request, "surveys/login.html", {})
+
+
+def view_signup(request):
+    if request.method != "GET":
+        return HttpResponseNotAllowed(["GET"])
+    return render(request, "surveys/sign up.html", {})
 
 
 def user_list(request):

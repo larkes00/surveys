@@ -1,0 +1,24 @@
+{% extends 'surveys/base.html' %}
+
+{% block content %}
+<script>
+    function onClick() {
+        var login = document.getElementById("sign_up_login").value
+        var password = document.getElementById("sign_up_password").value
+        var name = document.getElementById("sign_up_name").value
+        fetch(
+        'http://localhost:8000/signup/',
+            {
+                method: 'POST',
+                headers: new Headers(),
+                body: JSON.stringify({login: login, password: password, name: name})
+            }
+        ).then((res) => console.log(res))
+    }
+</script>
+<h1>Sign up</h1>
+<input type="text" required placeholder="login" id="sign_up_login"><br>
+<input type="text" required placeholder="password" id="sign_up_password"><br>
+<input type="text" required placeholder="name" id="sign_up_name"><br>
+<button name="foo" value="foo" onclick="onClick()">Submit</button>
+{% endblock %}

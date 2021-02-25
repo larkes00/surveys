@@ -22,11 +22,15 @@ from surveys import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("view/surveys/", views.view_surveys_list, name="surveys"),
-    path("view/surveys/<int:survey_id>/", views.view_survey, name="survey"),
+    path("view/surveys/", views.view_surveys_list, name="view_surveys"),
+    path("view/surveys/<int:survey_id>/", views.view_survey, name="view_survey"),
     path(
-        "complete_survey/create/", views.new_complete_survey, name="new_complete_survey"
+        "complete_survey/create/",
+        views.new_complete_survey,
+        name="view_new_complete_survey",
     ),
+    path("view/login/", views.view_login, name="view_login"),
+    path("view/signup/", views.view_signup, name="view_signup"),
     path("surveys/<int:survey_id>/", views.survey, name="survey"),
     path("users/", views.user_list, name="users"),
     path("surveyareas/", views.survey_areas_list, name="survey_areas"),
@@ -43,7 +47,7 @@ urlpatterns = [
     path("surveyarea/delete/", views.del_survey_area, name="del_survey_area"),
     path("user/delete/", views.del_user, name="del_user"),
     path("login/", views.login, name="login"),
-    path("singup/", views.singup, name="singup"),
+    path("signup/", views.singup, name="signup"),
     path("logout/", views.logout, name="logout"),
     path("surveys/edit/", views.edit_survey, name="edit_survey"),
 ]
