@@ -1,5 +1,7 @@
 import json
 
+from django.contrib.auth import authenticate, login as django_login
+from django.contrib.auth.models import User as DjangoUser
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseForbidden
 from django.http import HttpResponseNotAllowed
@@ -74,6 +76,17 @@ def login(request):
     return HttpResponseForbidden("Wrong password")
 
 
+def true_login(request):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    body = json.loads(request.body)
+    user = authenticate(username=body["login"], password=body["password"])
+    if user is None:
+        return HttpResponseNotFound("No such user")
+    django_login(request, user=user)
+    return JsonResponse({})
+
+
 def singup(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -88,6 +101,18 @@ def singup(request):
         user.save()
         return JsonResponse({"data": body})
     return HttpResponseBadRequest("Such user exists")
+
+
+def true_signup(request):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    body = json.loads(request.body)
+    user = DjangoUser.objects.create_user(
+        username=body['login'],
+        password=body['password']
+    )
+    user.save()
+    return JsonResponse({"data": body})
 
 
 def logout(request):

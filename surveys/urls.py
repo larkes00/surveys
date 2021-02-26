@@ -48,6 +48,8 @@ urlpatterns = [
     path("user/delete/", views.del_user, name="del_user"),
     path("login/", views.login, name="login"),
     path("signup/", views.singup, name="signup"),
+    # path("login/", views.true_login, name="login"),
+    # path("signup/", views.true_signup, name="signup"),
     path("logout/", views.logout, name="logout"),
     path("surveys/edit/", views.edit_survey, name="edit_survey"),
 ]
