@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login as django_login
 from django.contrib.auth.models import User as DjangoUser
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseForbidden
+from django.http import HttpResponse
 from django.http import HttpResponseNotAllowed
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
@@ -32,6 +33,10 @@ def view_signup(request):
 def user_list(request):
     if request.method != "GET":
         return HttpResponseNotAllowed(["GET"])
+
+    if not request.user.is_authenticated:
+        return HttpResponse("User is not logged in", status=401)
+
     users = User.objects.all()
     return JsonResponse({"data": parse_users(users)})
 
