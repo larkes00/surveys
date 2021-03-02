@@ -4,24 +4,26 @@
 <script>
     function onClick() {
         var questionDiv = document.getElementsByClassName('question')
+        let list = []
         for (var i = 0; i < questionDiv.length; i++) {
             answerDiv = questionDiv[i].getElementsByClassName('answer')
             for (var j = 0; j < answerDiv.length; j++){
                 inputCheckbox = answerDiv[j].getElementsByTagName('input')
                 for (var k = 0; k < inputCheckbox.length; k++) {
                     if (inputCheckbox[k].checked) {
-                        fetch(
-                        'http://localhost:8000/complete_survey/create/',
-                            {
-                                method: 'POST',
-                                headers: new Headers(),
-                                body: JSON.stringify({survey_id: '{{ survey.id }}', user_id: 1, question_id: questionDiv[i].id , answer_id: answerDiv[j].id})
-                            }
-                        ).then((res) => console.log(res))
+                        list.push({survey_id: '{{ survey.id }}', user_id: 1, question_id: questionDiv[i].id , answer_id: answerDiv[j].id})
                     }
                 }
             }
         }
+        fetch(
+            'http://localhost:8000/complete_survey/create/',
+                {
+                    method: 'POST',
+                    headers: new Headers(),
+                    body: JSON.stringify(list)
+                }
+            ).then((res) => console.log(res))
     }
 </script>
     {% for question in questions %}

@@ -10,13 +10,13 @@ from surveys.models import CompleteSurvey
 def new_complete_survey(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
-    body = json.loads(request.body)
-    complete_survey = CompleteSurvey(
-        user_id=body["user_id"],
-        survey_id=body["survey_id"],
-        question_id=body["question_id"],
-        answer_id=body["answer_id"],
-        completed_at=datetime.datetime.utcnow(),
-    )
-    complete_survey.save()
-    return JsonResponse({"data": body})
+    complete_surveys = json.loads(request.body)
+    for complete_survey in complete_surveys:
+        CompleteSurvey(
+            user_id=complete_survey["user_id"],
+            survey_id=complete_survey["survey_id"],
+            question_id=complete_survey["question_id"],
+            answer_id=complete_survey["answer_id"],
+            completed_at=datetime.datetime.utcnow(),
+        ).save()
+    return JsonResponse({"data": complete_surveys})
