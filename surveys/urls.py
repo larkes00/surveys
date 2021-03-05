@@ -47,7 +47,7 @@ urlpatterns = [
     path("answer/delete/", views.del_answer, name="del_answer"),
     path("surveyarea/delete/", views.del_survey_area, name="del_survey_area"),
     path("user/delete/", views.del_user, name="del_user"),
-    # path("login/", views.true_login, name="login"),
+    path("login/", views.true_login, name="login"),
     path("signup/", views.true_signup, name="signup"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("logout/", views.logout, name="logout"),

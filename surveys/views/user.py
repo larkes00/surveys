@@ -1,11 +1,13 @@
+import io
 import json
+from json import JSONDecodeError
 
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User as DjangoUser
-from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseNotAllowed, HttpResponseBadRequest
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 from django.shortcuts import redirect
@@ -14,6 +16,7 @@ from django.shortcuts import render
 from surveys.logic import get_user
 from surveys.logic import parse_users
 from surveys.models import User
+from surveys.serializers import LoginSerializer
 
 
 def view_login(request):
@@ -83,7 +86,15 @@ def del_user(request):
 def true_login(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
-    body = json.loads(request.body)
+    try:
+        request_body = json.loads(request.body)
+    except (TypeError, JSONDecodeError):
+        return HttpResponseBadRequest()
+
+    serializer = LoginSerializer(data=request_body)
+    if not serializer.is_valid():
+        return HttpResponseBadRequest(json.dumps(serializer.errors))
+    body = serializer.validated_data
     user = authenticate(username=body["login"], password=body["password"])
     if user is None:
         return HttpResponseNotFound("No such user")
