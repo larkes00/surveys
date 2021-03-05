@@ -1,12 +1,14 @@
 import datetime
 import json
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotAllowed
 from django.http import JsonResponse
 
 from surveys.models import CompleteSurvey
 
 
+@login_required(login_url="/accounts/login/")
 def new_complete_survey(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])

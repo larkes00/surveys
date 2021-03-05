@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.http import HttpResponseNotAllowed
 from django.http import HttpResponseNotFound
@@ -13,6 +14,7 @@ from surveys.logic import get_survey_question
 from surveys.models import Answer
 
 
+@login_required(login_url="/accounts/login/")
 def new_answer(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -22,6 +24,7 @@ def new_answer(request):
     return JsonResponse({"data": body})
 
 
+@login_required(login_url="/accounts/login/")
 def del_answer(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])

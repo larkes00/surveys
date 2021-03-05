@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import path
 from django.urls.conf import include  # noqa: F401 pylint: disable=W0611
 
@@ -37,7 +38,7 @@ urlpatterns = [
     path("questions/", views.question_list, name="questions"),
     path("question/<int:question_id>/", views.survey, name="question"),
     path("surveys/create/", views.new_survey, name="create_survey"),
-    path("user/create/", views.new_user, name="create_user"),
+    # path("user/create/", views.new_user, name="create_user"),
     path("answer/create/", views.new_answer, name="new_answer"),
     path("question/create/", views.new_question, name="new_question"),
     path("survey_area/create/", views.new_survey_area, name="new_survey_area"),
@@ -46,10 +47,9 @@ urlpatterns = [
     path("answer/delete/", views.del_answer, name="del_answer"),
     path("surveyarea/delete/", views.del_survey_area, name="del_survey_area"),
     path("user/delete/", views.del_user, name="del_user"),
-    path("login/", views.login, name="login"),
-    path("signup/", views.singup, name="signup"),
     # path("login/", views.true_login, name="login"),
-    # path("signup/", views.true_signup, name="signup"),
+    path("signup/", views.true_signup, name="signup"),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("logout/", views.logout, name="logout"),
     path("surveys/edit/", views.edit_survey, name="edit_survey"),
 ]

@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotAllowed
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
@@ -16,6 +17,7 @@ def survey_areas_list(request):
     return JsonResponse({"data": parse_survey_area(survey_areas)})
 
 
+@login_required(login_url="/accounts/login/")
 def new_survey_area(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
@@ -25,6 +27,7 @@ def new_survey_area(request):
     return JsonResponse({"data": body})
 
 
+@login_required(login_url="/accounts/login/")
 def del_survey_area(request):
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
