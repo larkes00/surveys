@@ -1,4 +1,8 @@
 import json
+from json.decoder import JSONDecodeError
+
+from django.http.response import HttpResponseBadRequest
+from surveys.serializers import SurveyAreaSerializer
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotFound
@@ -20,6 +24,15 @@ def survey_areas_list(request):
 @allow_only("POST")
 @login_required(login_url=URL_LOGIN_REDIRECT)
 def new_survey_area(request):
+    try:
+        request_body = json.loads(request.body)
+    except (TypeError, JSONDecodeError):
+        return HttpResponseBadRequest()
+
+    serializer = SurveyAreaSerializer(data=request_body)
+    if not serializer.is_valid():
+        return HttpResponseBadRequest(json.dumps(serializer.errors))
+    body = serializer.validated_data
     body = json.loads(request.body)
     survey_area = SurveyArea(name=body["name"])
     survey_area.save()

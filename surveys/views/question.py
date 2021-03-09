@@ -1,4 +1,8 @@
 import json
+from json.decoder import JSONDecodeError
+
+from django.http.response import HttpResponseBadRequest
+from surveys.serializers import QuestionSerializer
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -25,7 +29,15 @@ def question_list(request):
 @allow_only("POST")
 @login_required(login_url=URL_LOGIN_REDIRECT)
 def new_question(request):
-    body = json.loads(request.body)
+    try:
+        request_body = json.loads(request.body)
+    except (TypeError, JSONDecodeError):
+        return HttpResponseBadRequest()
+
+    serializer = QuestionSerializer(data=request_body)
+    if not serializer.is_valid():
+        return HttpResponseBadRequest(json.dumps(serializer.errors))
+    body = serializer.validated_data
     question = Question(
         content=body["content"],
         correct_answer_id=body["correct_answer_id"],

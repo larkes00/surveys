@@ -51,24 +51,6 @@ def del_user(request):
     return JsonResponse({"data": user.id})
 
 
-# def login(request):
-#     if request.method != "POST":
-#         return HttpResponseNotAllowed(["POST"])
-#     body = json.loads(request.body)
-#     user = get_user(body["login"])
-#     if user is None:
-#         return HttpResponseNotFound("No such user")
-#     if user.password == body["password"]:
-#         session = get_session(user_id=user.id)
-#         if session is None:
-#             session_code = create_session_code()
-#             session_list = Session(id=session_code, user_id=user.id)
-#             session_list.save()
-#             return JsonResponse({"session_id": session_list.id})
-#         return JsonResponse({"session_id": session.id})
-#     return HttpResponseForbidden("Wrong password")
-
-
 @allow_only("POST")
 def true_login(request):
     try:
@@ -87,25 +69,17 @@ def true_login(request):
     return JsonResponse({})
 
 
-# def singup(request):
-#     if request.method != "POST":
-#         return HttpResponseNotAllowed(["POST"])
-#     body = json.loads(request.body)
-#     user = get_user(body["login"])
-#     if user is None:
-#         user = User(
-#             name=body["name"],
-#             login=body["login"],
-#             password=body["password"],
-#         )
-#         user.save()
-#         return JsonResponse({"data": body})
-#     return HttpResponseBadRequest("Such user exists")
-
-
 @allow_only("POST")
 def true_signup(request):
-    body = json.loads(request.body)
+    try:
+        request_body = json.loads(request.body)
+    except (TypeError, JSONDecodeError):
+        return HttpResponseBadRequest()
+
+    serializer = LoginSerializer(data=request_body)
+    if not serializer.is_valid():
+        return HttpResponseBadRequest(json.dumps(serializer.errors))
+    body = serializer.validated_data
     user = DjangoUser.objects.create_user(
         username=body["login"], password=body["password"]
     )
