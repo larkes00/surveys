@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'rest_framework',
+    "rest_framework",
     "surveys",
 ]
 
@@ -153,3 +153,5 @@ STATIC_URL = "/static/"
 #         }
 #     }
 # }
+
+URL_LOGIN_REDIRECT = "/accounts/login/"

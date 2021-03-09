@@ -3,29 +3,28 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
-from django.http import HttpResponseNotAllowed
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 
+from surveys.logic import allow_only
 from surveys.logic import get_question
 from surveys.logic import get_session
 from surveys.logic import get_survey_question
 from surveys.logic import parse_questions
 from surveys.models import Question
+from surveys.settings import URL_LOGIN_REDIRECT
 
 
-@login_required(login_url="/accounts/login/")
+@allow_only("GET")
+@login_required(login_url=URL_LOGIN_REDIRECT)
 def question_list(request):
-    if request.method != "GET":
-        return HttpResponseNotAllowed(["GET"])
     questions = Question.objects.all()
     return JsonResponse({"data": parse_questions(questions)})
 
 
-@login_required(login_url="/accounts/login/")
+@allow_only("POST")
+@login_required(login_url=URL_LOGIN_REDIRECT)
 def new_question(request):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
     question = Question(
         content=body["content"],
@@ -35,10 +34,9 @@ def new_question(request):
     return JsonResponse({"data": body})
 
 
-@login_required(login_url="/accounts/login/")
+@allow_only("POST")
+@login_required(login_url=URL_LOGIN_REDIRECT)
 def del_question(request):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
     session = get_session(body["session_id"])
     if session is None:

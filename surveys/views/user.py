@@ -7,35 +7,33 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User as DjangoUser
-from django.http import HttpResponseNotAllowed, HttpResponseBadRequest
+from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 
+from surveys.logic import allow_only
 from surveys.logic import get_user
 from surveys.logic import parse_users
 from surveys.models import User
 from surveys.serializers import LoginSerializer
+from surveys.settings import URL_LOGIN_REDIRECT
 
 
+@allow_only("GET")
 def view_login(request):
-    if request.method != "GET":
-        return HttpResponseNotAllowed(["GET"])
     return render(request, "surveys/login.html", {})
 
 
+@allow_only("GET")
 def view_signup(request):
-    if request.method != "GET":
-        return HttpResponseNotAllowed(["GET"])
     return render(request, "surveys/sign up.html", {})
 
 
-@login_required(login_url="/accounts/login/")
+@allow_only("GET")
+@login_required(login_url=URL_LOGIN_REDIRECT)
 def user_list(request):
-    if request.method != "GET":
-        return HttpResponseNotAllowed(["GET"])
-
     # if not request.user.is_authenticated:
     #     return HttpResponse("User is not logged in", status=401)
 
@@ -43,20 +41,8 @@ def user_list(request):
     return JsonResponse({"data": parse_users(users)})
 
 
-# def new_user(request):
-#     if request.method != "POST":
-#         return HttpResponseNotAllowed(["POST"])
-#     body = json.loads(request.body)
-#     user = User(  # fmt: off
-#         name=body["name"], login=body["login"], password=body["password"]
-#     )  # fmt: on
-#     user.save()
-#     return JsonResponse({"data": body})
-
-
+@allow_only("POST")
 def del_user(request):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
     user = get_user(body["user_id"])
     if user is None:
@@ -83,9 +69,8 @@ def del_user(request):
 #     return HttpResponseForbidden("Wrong password")
 
 
+@allow_only("POST")
 def true_login(request):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     try:
         request_body = json.loads(request.body)
     except (TypeError, JSONDecodeError):
@@ -118,9 +103,8 @@ def true_login(request):
 #     return HttpResponseBadRequest("Such user exists")
 
 
+@allow_only("POST")
 def true_signup(request):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
     user = DjangoUser.objects.create_user(
         username=body["login"], password=body["password"]
@@ -129,13 +113,7 @@ def true_signup(request):
     return JsonResponse({"data": body})
 
 
+@allow_only("GET")
 def logout(request):
-    if request.method != "GET":
-        return HttpResponseNotAllowed(["GET"])
-    # body = json.loads(request.body)
-    # session = get_session(body["session_id"])
-    # if session is None:
-    #     return HttpResponseBadRequest("User already logout")
-    # session.delete()
     django_logout(request)
     return redirect("http://localhost:8000/view/surveys/")

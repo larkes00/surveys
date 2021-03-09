@@ -7,25 +7,27 @@ from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 from django.shortcuts import render
 
+from surveys.logic import allow_only
 from surveys.logic import get_session
 from surveys.logic import get_survey
 from surveys.logic import parse_surveys
 from surveys.models import Answer
 from surveys.models import Survey
 from surveys.models import SurveyQuestion
+from surveys.settings import URL_LOGIN_REDIRECT
+
+
+allow_only("GET")
 
 
 def view_surveys_list(request):
-    if request.method != "GET":
-        return HttpResponseNotAllowed(["GET"])
     surveys = Survey.objects.all()
     return render(request, "surveys/surveys_list.html", {"surveys": surveys})
 
 
-@login_required(login_url="/accounts/login/")
+@allow_only("GET")
+@login_required(login_url=URL_LOGIN_REDIRECT)
 def view_survey(request, survey_id):
-    if request.method != "GET":
-        return HttpResponseNotAllowed(["GET"])
     survey_obj = get_survey(survey_id)
     if survey_obj is None:
         return HttpResponseNotFound("No such survey")
@@ -42,20 +44,18 @@ def view_survey(request, survey_id):
     )
 
 
-@login_required(login_url="/accounts/login/")
+@allow_only("GET")
+@login_required(login_url=URL_LOGIN_REDIRECT)
 def survey(request, survey_id):
-    if request.method != "GET":
-        return HttpResponseNotAllowed(["GET"])
     survey_obj = get_survey(survey_id)
     if survey_obj is None:
         return HttpResponseNotFound("No such survey")
     return JsonResponse({"data": parse_surveys(survey_obj)})
 
 
-@login_required(login_url="/accounts/login/")
+@allow_only("POST")
+@login_required(login_url=URL_LOGIN_REDIRECT)
 def new_survey(request):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
     survey_obj = Survey(
         author_id=body["author_id"],
@@ -67,10 +67,9 @@ def new_survey(request):
     return JsonResponse({"data": body})
 
 
-@login_required(login_url="/accounts/login/")
+@allow_only("POST")
+@login_required(login_url=URL_LOGIN_REDIRECT)
 def del_survey(request):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
     session = get_session(body["session_id"])
     if session is None:
@@ -84,9 +83,8 @@ def del_survey(request):
     return HttpResponseForbidden("You cannot delete someone else's survey")
 
 
+@allow_only("POST")
 def edit_survey(request):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     body = json.loads(request.body)
     session = get_session(body["session_id"])
     if session is None:

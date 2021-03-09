@@ -1,5 +1,7 @@
 import uuid
 
+from django.http.response import HttpResponseNotAllowed
+
 from surveys.models import Answer
 from surveys.models import Question
 from surveys.models import Session
@@ -156,3 +158,15 @@ def parse_answer(answer):
         "content": answer.content,
         "question_id": answer.question_id,
     }
+
+
+def allow_only(methods):
+    def decorator(handler):
+        def new_handler(request):
+            if request.method not in methods:
+                return HttpResponseNotAllowed(methods)
+            return handler(request)
+
+        return new_handler
+
+    return decorator
