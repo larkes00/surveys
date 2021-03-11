@@ -1,9 +1,9 @@
 from django.db import models
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 
 class CompleteSurvey(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     survey = models.ForeignKey("Survey", on_delete=models.CASCADE)
     question = models.ForeignKey(
         "Question",
@@ -20,18 +20,11 @@ class Survey(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.TextField()
     author = models.ForeignKey(
-        "User",
+        User,
         on_delete=models.CASCADE,
     )
     area = models.ForeignKey("SurveyArea", on_delete=models.CASCADE)
     type = models.TextField(null=True)
-
-
-class User(models.Model):
-    id = models.AutoField(primary_key=True)
-    login = models.TextField(null=True)
-    password = models.TextField(null=True)
-    name = models.TextField()
 
 
 class SurveyArea(models.Model):
@@ -48,7 +41,7 @@ class Question(models.Model):
         null=True,
         related_name="correct_answer_id",  # fmt: on
     )
-    author = models.ForeignKey("User", on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 
 class Answer(models.Model):
@@ -64,8 +57,3 @@ class SurveyQuestion(models.Model):
     id = models.AutoField(primary_key=True)
     survey = models.ForeignKey("Survey", on_delete=models.CASCADE)
     question = models.ForeignKey("Question", on_delete=models.CASCADE)
-
-
-class Session(models.Model):
-    id = models.TextField(primary_key=True)
-    user = models.ForeignKey("User", on_delete=models.CASCADE)

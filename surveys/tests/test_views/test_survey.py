@@ -106,71 +106,71 @@ def test_create_survey(client):
     }
 
 
-@pytest.mark.django_db
-def test_delete_survey_wrong_session_id(client):
-    response = client.post(  # fmt off
-        get_survey_delete_url(),
-        {"session_id": "test_wrong_session_id"},
-        content_type="application/json",
-    )  # fmt on
-    assert response.status_code == 404
+# @pytest.mark.django_db
+# def test_delete_survey_wrong_session_id(client):
+#     response = client.post(  # fmt off
+#         get_survey_delete_url(),
+#         {"session_id": "test_wrong_session_id"},
+#         content_type="application/json",
+#     )  # fmt on
+#     assert response.status_code == 404
 
 
-@pytest.mark.django_db
-def test_delete_survey_no_such_survey(client):
-    create_user(login="Bad12345")
-    create_session("test_session_id", user_id=1)
-    create_survey_area("Anything")
-    create_survey(name="Survey", author_id=1, area_id=1)
-    response = client.post(
-        get_survey_delete_url(),
-        {"session_id": "test_session_id", "survey_id": 0},
-        content_type="application/json",
-    )
-    assert response.status_code == 404
+# @pytest.mark.django_db
+# def test_delete_survey_no_such_survey(client):
+#     create_user(login="Bad12345")
+#     create_session("test_session_id", user_id=1)
+#     create_survey_area("Anything")
+#     create_survey(name="Survey", author_id=1, area_id=1)
+#     response = client.post(
+#         get_survey_delete_url(),
+#         {"session_id": "test_session_id", "survey_id": 0},
+#         content_type="application/json",
+#     )
+#     assert response.status_code == 404
 
 
-@pytest.mark.django_db
-def test_successful_delete_survey(client):
-    create_user(login="Bad12345")
-    create_session("test_session_id", user_id=1)
-    create_survey_area("Anything")
-    survey = create_survey(name="Survey", author_id=1, area_id=1)
-    response = client.post(
-        get_survey_delete_url(),
-        {  # fmt off
-            "session_id": "test_session_id",
-            "survey_id": 1,
-        },  # fmt on
-        content_type="application/json",
-    )
-    assert response.status_code == 200
-    survey_obj = get_survey(survey_id=survey.id)
-    assert survey_obj is None
+# @pytest.mark.django_db
+# def test_successful_delete_survey(client):
+#     create_user(login="Bad12345")
+#     create_session("test_session_id", user_id=1)
+#     create_survey_area("Anything")
+#     survey = create_survey(name="Survey", author_id=1, area_id=1)
+#     response = client.post(
+#         get_survey_delete_url(),
+#         {  # fmt off
+#             "session_id": "test_session_id",
+#             "survey_id": 1,
+#         },  # fmt on
+#         content_type="application/json",
+#     )
+#     assert response.status_code == 200
+#     survey_obj = get_survey(survey_id=survey.id)
+#     assert survey_obj is None
 
 
-@pytest.mark.django_db
-def test_no_accees_delete_survey(client):
-    create_user(id=1, login="Bad12345")
-    create_user(id=2, login="Good12345")
-    create_session("test_session_id", user_id=1)
-    create_session("test_session_id_wrong_user", user_id=2)
-    create_survey_area("Anything")
-    create_survey(name="Survey", author_id=1, area_id=1)
-    response = client.post(
-        get_survey_delete_url(),
-        {  # fmt off
-            "session_id": "test_session_id_wrong_user",
-            "survey_id": 1,
-        },  # fmt on
-        content_type="application/json",
-    )
-    assert response.status_code == 403
-    survey_obj = parse_surveys(get_survey(survey_id=1))
-    assert survey_obj == {
-        "id": 1,
-        "name": "Survey",
-        "author_id": 1,
-        "area_id": 1,
-        "type": "Formal",
-    }
+# @pytest.mark.django_db
+# def test_no_accees_delete_survey(client):
+#     create_user(id=1, login="Bad12345")
+#     create_user(id=2, login="Good12345")
+#     create_session("test_session_id", user_id=1)
+#     create_session("test_session_id_wrong_user", user_id=2)
+#     create_survey_area("Anything")
+#     create_survey(name="Survey", author_id=1, area_id=1)
+#     response = client.post(
+#         get_survey_delete_url(),
+#         {  # fmt off
+#             "session_id": "test_session_id_wrong_user",
+#             "survey_id": 1,
+#         },  # fmt on
+#         content_type="application/json",
+#     )
+#     assert response.status_code == 403
+#     survey_obj = parse_surveys(get_survey(survey_id=1))
+#     assert survey_obj == {
+#         "id": 1,
+#         "name": "Survey",
+#         "author_id": 1,
+#         "area_id": 1,
+#         "type": "Formal",
+#     }

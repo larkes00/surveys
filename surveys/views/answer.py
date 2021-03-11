@@ -8,7 +8,6 @@ from django.http import JsonResponse
 from surveys.logic import allow_only
 from surveys.logic import get_answer
 from surveys.logic import get_question
-from surveys.logic import get_session
 from surveys.logic import get_survey
 from surveys.logic import get_survey_question
 from surveys.models import Answer
@@ -28,9 +27,6 @@ def new_answer(request):
 @login_required(login_url=URL_LOGIN_REDIRECT)
 def del_answer(request):
     body = json.loads(request.body)
-    session = get_session(body["session_id"])
-    if session is None:
-        return HttpResponseNotFound("User is not logged in")
     answer = get_answer(body["answer_id"])
     if answer is None:
         return HttpResponseNotFound("No such answer")

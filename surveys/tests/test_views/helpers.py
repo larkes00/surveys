@@ -1,22 +1,15 @@
 from surveys.models import Answer
 from surveys.models import Question
-from surveys.models import Session
 from surveys.models import Survey
 from surveys.models import SurveyArea
 from surveys.models import SurveyQuestion
-from surveys.models import User
+# from surveys.models import User
 
 
-def create_user(login: str, password: str = "12345", name: str = "John", id: int = 1):
-    user = User(id=id, login=login, password=password, name=name)
-    user.save()
-    return user
-
-
-def create_session(session_id: str, user_id: int):
-    session = Session(id=session_id, user_id=user_id)
-    session.save()
-    return session
+# def create_user(login: str, password: str = "12345", name: str = "John", id: int = 1):
+#     user = User(id=id, login=login, password=password, name=name)
+#     user.save()
+#     return user
 
 
 def create_question(content: str, correct_answer_id: int, author_id: int, id: int = 1):

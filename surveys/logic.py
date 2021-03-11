@@ -1,4 +1,3 @@
-import uuid
 import json
 from json import JSONDecodeError
 
@@ -7,15 +6,9 @@ from django.http.response import HttpResponseBadRequest
 
 from surveys.models import Answer
 from surveys.models import Question
-from surveys.models import Session
 from surveys.models import Survey
 from surveys.models import SurveyArea
 from surveys.models import SurveyQuestion
-from surveys.models import User
-
-
-def create_session_code():
-    return str(uuid.uuid4())
 
 
 def get_survey(survey_id):
@@ -25,18 +18,6 @@ def get_survey(survey_id):
         return None
     else:
         return survey
-
-
-def get_session(session_id=None, user_id=None):
-    try:
-        if session_id is not None:
-            session = Session.objects.get(id=session_id)
-        else:
-            session = Session.objects.get(user_id=user_id)
-    except Session.DoesNotExist:
-        return None
-    else:
-        return session
 
 
 def get_answer(answer_id):
@@ -82,13 +63,13 @@ def get_survey_area(survey_area_id):
         return survey_area
 
 
-def get_user(login):
-    try:
-        user = User.objects.get(login=login)
-    except User.DoesNotExist:
-        return None
-    else:
-        return user
+# def get_user(login):
+#     try:
+#         user = User.objects.get(login=login)
+#     except User.DoesNotExist:
+#         return None
+#     else:
+#         return user
 
 
 def parse_surveys(surveys):
@@ -101,26 +82,26 @@ def parse_surveys(surveys):
     }
 
 
-def parse_users(users):
-    response_list = []
-    try:
-        for user in users:
-            response_list.append(
-                {
-                    "id": user.id,
-                    "name": user.name,
-                    "login": user.login,
-                    "password": user.password,
-                }
-            )
-    except TypeError:
-        return {
-            "id": users.id,
-            "name": users.name,
-            "login": users.login,
-            "password": users.password,
-        }
-    return response_list
+# def parse_users(users):
+#     response_list = []
+#     try:
+#         for user in users:
+#             response_list.append(
+#                 {
+#                     "id": user.id,
+#                     "name": user.name,
+#                     "login": user.login,
+#                     "password": user.password,
+#                 }
+#             )
+#     except TypeError:
+#         return {
+#             "id": users.id,
+#             "name": users.name,
+#             "login": users.login,
+#             "password": users.password,
+#         }
+#     return response_list
 
 
 def parse_questions(questions):

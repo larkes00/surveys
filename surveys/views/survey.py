@@ -8,7 +8,6 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from surveys.logic import allow_only
-from surveys.logic import get_session
 from surveys.logic import get_survey
 from surveys.logic import parse_surveys
 from surveys.models import Answer
@@ -67,39 +66,15 @@ def new_survey(request):
     return JsonResponse({"data": body})
 
 
-@allow_only("POST")
-@login_required(login_url=URL_LOGIN_REDIRECT)
-def del_survey(request):
-    body = json.loads(request.body)
-    session = get_session(body["session_id"])
-    if session is None:
-        return HttpResponseNotFound("No such session")
-    survey_obj = get_survey(body["survey_id"])
-    if survey_obj is None:
-        return HttpResponseNotFound("No such survey")
-    if survey_obj.author_id == session.user_id:
-        survey_obj.delete()
-        return JsonResponse({"data": survey_obj.id})
-    return HttpResponseForbidden("You cannot delete someone else's survey")
-
-
-@allow_only("POST")
-def edit_survey(request):
-    body = json.loads(request.body)
-    session = get_session(body["session_id"])
-    if session is None:
-        return HttpResponseNotFound("No such session")
-    survey_obj = get_survey(body["survey_id"])
-    if survey_obj is None:
-        return HttpResponseNotFound("No such survey")
-    if survey_obj.author_id == session.user_id:
-        # fmt: off
-        survey_obj = Survey.objects.filter(id=body["survey_id"]).update(
-            name=body["name"]
-        )
-        survey_obj = Survey.objects.filter(id=body["survey_id"]).update(
-            type=body["type"]
-        )
-        # fmt: on
-        return JsonResponse({"data": survey_obj})
-    return HttpResponseForbidden("")
+# TODO: додумать
+# @allow_only("POST")
+# @login_required(login_url=URL_LOGIN_REDIRECT)
+# def del_survey(request):
+#     body = json.loads(request.body)
+#     survey_obj = get_survey(body["survey_id"])
+#     if survey_obj is None:
+#         return HttpResponseNotFound("No such survey")
+#     if survey_obj.author_id == session.user_id:
+#         survey_obj.delete()
+#         return JsonResponse({"data": survey_obj.id})
+#     return HttpResponseForbidden("You cannot delete someone else's survey")

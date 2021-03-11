@@ -14,9 +14,8 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 
 from surveys.logic import allow_only, validate
-from surveys.logic import get_user
-from surveys.logic import parse_users
-from surveys.models import User
+# from surveys.logic import get_user
+# from surveys.logic import parse_users
 from surveys.serializers import LoginSerializer
 from surveys.settings import URL_LOGIN_REDIRECT
 
@@ -31,24 +30,24 @@ def view_signup(request):
     return render(request, "surveys/sign up.html", {})
 
 
-@allow_only("GET")
-@login_required(login_url=URL_LOGIN_REDIRECT)
-def user_list(request):
-    # if not request.user.is_authenticated:
-    #     return HttpResponse("User is not logged in", status=401)
+# @allow_only("GET")
+# @login_required(login_url=URL_LOGIN_REDIRECT)
+# def user_list(request):
+#     # if not request.user.is_authenticated:
+#     #     return HttpResponse("User is not logged in", status=401)
 
-    users = User.objects.all()
-    return JsonResponse({"data": parse_users(users)})
+#     users = User.objects.all()
+#     return JsonResponse({"data": parse_users(users)})
 
 
-@allow_only("POST")
-def del_user(request):
-    body = json.loads(request.body)
-    user = get_user(body["user_id"])
-    if user is None:
-        return HttpResponseNotFound("No such user")
-    user.delete()
-    return JsonResponse({"data": user.id})
+# @allow_only("POST")
+# def del_user(request):
+#     body = json.loads(request.body)
+#     user = get_user(body["user_id"])
+#     if user is None:
+#         return HttpResponseNotFound("No such user")
+#     user.delete()
+#     return JsonResponse({"data": user.id})
 
 @validate(LoginSerializer)
 @allow_only("POST")
