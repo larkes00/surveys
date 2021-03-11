@@ -13,7 +13,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 
-from surveys.logic import allow_only
+from surveys.logic import allow_only, validate
 from surveys.logic import get_user
 from surveys.logic import parse_users
 from surveys.models import User
@@ -50,7 +50,7 @@ def del_user(request):
     user.delete()
     return JsonResponse({"data": user.id})
 
-
+@validate(LoginSerializer)
 @allow_only("POST")
 def true_login(request):
     try:
@@ -69,6 +69,7 @@ def true_login(request):
     return JsonResponse({})
 
 
+@validate(LoginSerializer)
 @allow_only("POST")
 def true_signup(request):
     try:
@@ -76,10 +77,10 @@ def true_signup(request):
     except (TypeError, JSONDecodeError):
         return HttpResponseBadRequest()
 
-    serializer = LoginSerializer(data=request_body)
-    if not serializer.is_valid():
-        return HttpResponseBadRequest(json.dumps(serializer.errors))
-    body = serializer.validated_data
+    # serializer = LoginSerializer(data=request_body)
+    # if not serializer.is_valid():
+    #     return HttpResponseBadRequest(json.dumps(serializer.errors))
+    body = request_body
     user = DjangoUser.objects.create_user(
         username=body["login"], password=body["password"]
     )

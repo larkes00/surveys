@@ -1,6 +1,9 @@
 import uuid
+import json
+from json import JSONDecodeError
 
 from django.http.response import HttpResponseNotAllowed
+from django.http.response import HttpResponseBadRequest
 
 from surveys.models import Answer
 from surveys.models import Question
@@ -169,4 +172,19 @@ def allow_only(methods):
 
         return new_handler
 
+    return decorator
+
+
+def validate(serializer_cls):
+    def decorator(handler):
+        def new_handler(request):
+            try:
+                request_body = json.loads(request.body)
+            except (TypeError, JSONDecodeError):
+                return HttpResponseBadRequest()
+            serializer = serializer_cls(data=request_body)
+            if not serializer.is_valid():
+                return HttpResponseBadRequest(json.dumps(serializer.errors))
+            return handler(request)
+        return new_handler
     return decorator
