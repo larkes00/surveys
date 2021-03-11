@@ -169,3 +169,15 @@ def validate(serializer_cls):
             return handler(request)
         return new_handler
     return decorator
+
+
+def ensure_json():
+    def decorator(handler):
+        def new_handler(request):
+            try:
+                json.loads(request.body)
+            except ValueError:
+                return HttpResponseBadRequest()
+            return handler(request)
+        return new_handler
+    return decorator

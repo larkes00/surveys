@@ -16,15 +16,14 @@ from surveys.models import SurveyQuestion
 from surveys.settings import URL_LOGIN_REDIRECT
 
 
-allow_only("GET")
-
-
+@allow_only("GET")
 def view_surveys_list(request):
     surveys = Survey.objects.all()
     return render(request, "surveys/surveys_list.html", {"surveys": surveys})
 
 
-@allow_only("GET")
+# TODO: починить
+# @allow_only("GET")
 @login_required(login_url=URL_LOGIN_REDIRECT)
 def view_survey(request, survey_id):
     survey_obj = get_survey(survey_id)
