@@ -1,10 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class CompleteSurveyQuestion(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    survey = models.ForeignKey("Survey", on_delete=models.CASCADE)
     question = models.ForeignKey(
         "Question",
         on_delete=models.CASCADE,
@@ -13,13 +12,14 @@ class CompleteSurveyQuestion(models.Model):
         "Answer",
         on_delete=models.CASCADE,
     )
-    completed_at = models.DateField(null=True)
+    complete_survey = models.ForeignKey("CompleteSurvey", on_delete=models.CASCADE)
 
 
-# TODO: доделать
 class CompleteSurvey(models.Model):
     id = models.AutoField(primary_key=True)
-    survey_completed = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    survey = models.ForeignKey("Survey", on_delete=models.CASCADE)
+    completed_at = models.DateField(null=True)
 
 
 class Survey(models.Model):
