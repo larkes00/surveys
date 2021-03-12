@@ -32,3 +32,16 @@ class QuestionSerializer(serializers.Serializer):
 
 class SurveyAreaSerializer(serializers.Serializer):
     name = serializers.CharField(required=True)
+
+
+class SurveyAreaDeleteSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=True)
+
+
+class AnswerSerializer(serializers.Serializer):
+    content = serializers.CharField(required=True)
+    question_id = serializers.IntegerField(required=True)
+
+
+class GetOneSurveySerializer(serializers.Serializer):
+    survey_id = serializers.IntegerField(required=True)

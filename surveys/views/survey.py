@@ -1,4 +1,5 @@
 import json
+from surveys.serializers import GetOneSurveySerializer, SurveySerializer
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
@@ -7,7 +8,7 @@ from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from surveys.logic import allow_only
+from surveys.logic import allow_only, validate
 from surveys.logic import get_survey
 from surveys.logic import parse_surveys
 from surveys.models import Answer
@@ -44,6 +45,7 @@ def view_survey(request, survey_id):
 
 @allow_only("GET")
 @login_required(login_url=URL_LOGIN_REDIRECT)
+@validate(GetOneSurveySerializer)
 def survey(request, survey_id):
     survey_obj = get_survey(survey_id)
     if survey_obj is None:
@@ -53,6 +55,7 @@ def survey(request, survey_id):
 
 @allow_only("POST")
 @login_required(login_url=URL_LOGIN_REDIRECT)
+@validate(SurveySerializer)
 def new_survey(request):
     body = json.loads(request.body)
     survey_obj = Survey(

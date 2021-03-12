@@ -16,7 +16,7 @@ from django.shortcuts import render
 from surveys.logic import allow_only, validate
 # from surveys.logic import get_user
 # from surveys.logic import parse_users
-from surveys.serializers import LoginSerializer
+from surveys.serializers import LoginSerializer, SignupSerializer
 from surveys.settings import URL_LOGIN_REDIRECT
 
 
@@ -49,18 +49,10 @@ def view_signup(request):
 #     user.delete()
 #     return JsonResponse({"data": user.id})
 
-@validate(LoginSerializer)
 @allow_only("POST")
+@validate(LoginSerializer)
 def true_login(request):
-    try:
-        request_body = json.loads(request.body)
-    except (TypeError, JSONDecodeError):
-        return HttpResponseBadRequest()
-
-    serializer = LoginSerializer(data=request_body)
-    if not serializer.is_valid():
-        return HttpResponseBadRequest(json.dumps(serializer.errors))
-    body = serializer.validated_data
+    body = json.loads(request.body)
     user = authenticate(username=body["login"], password=body["password"])
     if user is None:
         return HttpResponseNotFound("No such user")
@@ -68,18 +60,10 @@ def true_login(request):
     return JsonResponse({})
 
 
-@validate(LoginSerializer)
 @allow_only("POST")
+@validate(SignupSerializer)
 def true_signup(request):
-    try:
-        request_body = json.loads(request.body)
-    except (TypeError, JSONDecodeError):
-        return HttpResponseBadRequest()
-
-    # serializer = LoginSerializer(data=request_body)
-    # if not serializer.is_valid():
-    #     return HttpResponseBadRequest(json.dumps(serializer.errors))
-    body = request_body
+    body = json.loads(request.body)
     user = DjangoUser.objects.create_user(
         username=body["login"], password=body["password"]
     )

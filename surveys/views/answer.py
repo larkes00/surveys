@@ -1,11 +1,12 @@
 import json
+from surveys.serializers import AnswerSerializer
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 
-from surveys.logic import allow_only
+from surveys.logic import allow_only, validate
 from surveys.logic import get_answer
 from surveys.logic import get_question
 from surveys.logic import get_survey
@@ -16,6 +17,7 @@ from surveys.settings import URL_LOGIN_REDIRECT
 
 @allow_only("POST")
 @login_required(login_url=URL_LOGIN_REDIRECT)
+@validate(AnswerSerializer)
 def new_answer(request):
     body = json.loads(request.body)
     answer = Answer(content=body["content"], question_id=body["question_id"])
