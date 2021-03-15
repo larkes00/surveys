@@ -14,6 +14,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 
 from surveys.logic import allow_only, validate
+
 # from surveys.logic import get_user
 # from surveys.logic import parse_users
 from surveys.serializers import LoginSerializer, SignupSerializer
@@ -48,6 +49,7 @@ def view_signup(request):
 #         return HttpResponseNotFound("No such user")
 #     user.delete()
 #     return JsonResponse({"data": user.id})
+
 
 @allow_only("POST")
 @validate(LoginSerializer)
