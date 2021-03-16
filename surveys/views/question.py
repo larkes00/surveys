@@ -1,15 +1,13 @@
 import json
-from json.decoder import JSONDecodeError
-
-from django.http.response import HttpResponseBadRequest
-from surveys.serializers import QuestionSerializer
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
-from surveys.logic import allow_only, validate
+from surveys.logic import allow_only
 from surveys.logic import parse_questions
+from surveys.logic import validate
 from surveys.models import Question
+from surveys.serializers import QuestionSerializer
 from surveys.settings import URL_LOGIN_REDIRECT
 
 

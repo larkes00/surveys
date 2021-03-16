@@ -1,17 +1,15 @@
 import json
-from json.decoder import JSONDecodeError
-
-from django.http.response import HttpResponseBadRequest
-from surveys.serializers import SurveyAreaDeleteSerializer, SurveyAreaSerializer
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 
-from surveys.logic import allow_only, validate
+from surveys.logic import allow_only
 from surveys.logic import get_survey_area
 from surveys.logic import parse_survey_area
+from surveys.logic import validate
 from surveys.models import SurveyArea
+from surveys.serializers import SurveyAreaSerializer
 from surveys.settings import URL_LOGIN_REDIRECT
 
 
@@ -33,7 +31,7 @@ def new_survey_area(request):
 
 @allow_only("POST")
 @login_required(login_url=URL_LOGIN_REDIRECT)
-@validate(SurveyAreaDeleteSerializer)
+# @validate(SurveyAreaDeleteSerializer)
 def del_survey_area(request):
     body = json.loads(request.body)
     survey_area = get_survey_area(body["survey_area_id"])

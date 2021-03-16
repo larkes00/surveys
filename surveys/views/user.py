@@ -1,6 +1,4 @@
-import io
 import json
-from json import JSONDecodeError
 
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
@@ -13,11 +11,13 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 
-from surveys.logic import allow_only, validate
-
+from surveys.logic import allow_only
+from surveys.logic import parse_users
+from surveys.logic import validate
 # from surveys.logic import get_user
 # from surveys.logic import parse_users
-from surveys.serializers import LoginSerializer, SignupSerializer
+from surveys.serializers import LoginSerializer
+from surveys.serializers import SignupSerializer
 from surveys.settings import URL_LOGIN_REDIRECT
 
 
@@ -31,14 +31,11 @@ def view_signup(request):
     return render(request, "surveys/sign up.html", {})
 
 
-# @allow_only("GET")
-# @login_required(login_url=URL_LOGIN_REDIRECT)
-# def user_list(request):
-#     # if not request.user.is_authenticated:
-#     #     return HttpResponse("User is not logged in", status=401)
-
-#     users = User.objects.all()
-#     return JsonResponse({"data": parse_users(users)})
+@allow_only("GET")
+@login_required(login_url=URL_LOGIN_REDIRECT)
+def user_list(request):
+    users = DjangoUser.objects.all()
+    return JsonResponse({"data": parse_users(users)})
 
 
 # @allow_only("POST")
@@ -62,15 +59,20 @@ def true_login(request):
     return JsonResponse({})
 
 
+# TODO: проверять наличие таких же пользователей
 @allow_only("POST")
 @validate(SignupSerializer)
 def true_signup(request):
     body = json.loads(request.body)
-    user = DjangoUser.objects.create_user(
-        username=body["login"], password=body["password"]
-    )
-    user.save()
-    return JsonResponse({"data": body})
+    try:
+        DjangoUser.objects.get(username=body["login"])
+    except DjangoUser.DoesNotExist:
+        user = DjangoUser.objects.create_user(
+            username=body["login"], password=body["password"]
+        )
+        user.save()
+        return JsonResponse({"data": body})
+    return HttpResponseBadRequest
 
 
 @allow_only("GET")

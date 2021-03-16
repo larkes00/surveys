@@ -1,8 +1,8 @@
 import json
 from json import JSONDecodeError
 
-from django.http.response import HttpResponseNotAllowed
 from django.http.response import HttpResponseBadRequest
+from django.http.response import HttpResponseNotAllowed
 
 from surveys.models import Answer
 from surveys.models import Question
@@ -82,26 +82,22 @@ def parse_surveys(surveys):
     }
 
 
-# def parse_users(users):
-#     response_list = []
-#     try:
-#         for user in users:
-#             response_list.append(
-#                 {
-#                     "id": user.id,
-#                     "name": user.name,
-#                     "login": user.login,
-#                     "password": user.password,
-#                 }
-#             )
-#     except TypeError:
-#         return {
-#             "id": users.id,
-#             "name": users.name,
-#             "login": users.login,
-#             "password": users.password,
-#         }
-#     return response_list
+def parse_users(users):
+    response_list = []
+    try:
+        for user in users:
+            response_list.append(
+                {
+                    "id": user.id,
+                    "username": user.username,
+                }
+            )
+    except TypeError:
+        return {
+            "id": users.id,
+            "username": users.username,
+        }
+    return response_list
 
 
 def parse_questions(questions):
@@ -167,7 +163,9 @@ def validate(serializer_cls):
             if not serializer.is_valid():
                 return HttpResponseBadRequest(json.dumps(serializer.errors))
             return handler(request)
+
         return new_handler
+
     return decorator
 
 
@@ -179,5 +177,7 @@ def ensure_json():
             except ValueError:
                 return HttpResponseBadRequest()
             return handler(request)
+
         return new_handler
+
     return decorator
