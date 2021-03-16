@@ -4,6 +4,7 @@ import pytest
 from surveys.logic import get_survey_area
 from surveys.logic import parse_survey_area
 from surveys.tests.test_views.helpers import create_survey_area
+from surveys.tests.test_views.helpers import create_user
 
 
 def get_survey_area_list_url():
@@ -40,18 +41,20 @@ def test_survey_area_delete_post_only(client):
 
 @pytest.mark.django_db
 def test_survey_area_get_list(client):
-    create_survey_area(id=1, name="Anything")
-    create_survey_area(id=2, name="Nothing")
+    create_survey_area(id=1, name="TestSurveyArea1")
+    create_survey_area(id=2, name="TestSurveyArea2")
     response = client.get(get_survey_area_list_url())
     assert response.status_code == 200
     assert response.json()["data"] == [
-        {"id": 1, "name": "Anything"},
-        {"id": 2, "name": "Nothing"},
+        {"id": 1, "name": "TestSurveyArea1"},
+        {"id": 2, "name": "TestSurveyArea2"},
     ]
 
 
 @pytest.mark.django_db
 def test_survey_area_create_successful(client):
+    create_user(login="TestUser")
+    client.login(username="TestUser", password="12345678")
     response = client.post(
         get_survey_area_create_url(),
         {"name": "Something"},
@@ -64,6 +67,8 @@ def test_survey_area_create_successful(client):
 
 @pytest.mark.django_db
 def test_survey_area_delete_successful(client):
+    create_user(login="TestUser")
+    client.login(username="TestUser", password="12345678")
     survey_area = create_survey_area(name="Anything")
     response = client.post(
         get_survey_area_delete_url(),
@@ -77,6 +82,8 @@ def test_survey_area_delete_successful(client):
 
 @pytest.mark.django_db
 def test_survey_area_delete_unsuccessful(client):
+    create_user(login="TestUser")
+    client.login(username="TestUser", password="12345678")
     response = client.post(
         get_survey_area_delete_url(),
         {"survey_area_id": 1},
