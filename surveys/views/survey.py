@@ -1,19 +1,21 @@
 import json
-from surveys.serializers import GetOneSurveySerializer, SurveySerializer
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
-from django.http import HttpResponseNotAllowed
+from django.contrib.auth.models import User
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from surveys.logic import allow_only, validate
+from surveys.logic import allow_only
 from surveys.logic import get_survey
 from surveys.logic import parse_surveys
+from surveys.logic import parse_users
+from surveys.logic import validate
 from surveys.models import Answer
 from surveys.models import Survey
 from surveys.models import SurveyQuestion
+from surveys.serializers import GetOneSurveySerializer
+from surveys.serializers import SurveySerializer
 from surveys.settings import URL_LOGIN_REDIRECT
 
 
@@ -36,10 +38,16 @@ def view_survey(request, survey_id):
         questions.append(survey_question.question)
     for answer in Answer.objects.all():
         answers.append(answer)
+    user = parse_users(request.user)
     return render(
         request,
         "surveys/survey.html",
-        {"survey": survey_obj, "questions": questions, "answers": answers},
+        {
+            "survey": survey_obj,
+            "questions": questions,
+            "answers": answers,
+            "user": user,
+        },
     )
 
 

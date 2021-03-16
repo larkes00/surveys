@@ -11,7 +11,7 @@
                 inputCheckbox = answerDiv[j].getElementsByTagName('input')
                 for (var k = 0; k < inputCheckbox.length; k++) {
                     if (inputCheckbox[k].checked) {
-                        list.push({survey_id: '{{ survey.id }}', user_id: 1, question_id: questionDiv[i].id , answer_id: answerDiv[j].id})
+                        list.push({question_id: questionDiv[i].id , answer_id: answerDiv[j].id})
                     }
                 }
             }
@@ -21,7 +21,7 @@
                 {
                     method: 'POST',
                     headers: new Headers(),
-                    body: JSON.stringify(list)
+                    body: JSON.stringify({questions: list, survey_id: '{{ survey.id }}', user_id: '{{ user.id }}'})
                 }
             ).then((res) => console.log(res))
     }
