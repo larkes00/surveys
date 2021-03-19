@@ -11,11 +11,11 @@ class SignupSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, min_length=8)
 
 
-class CompleteSurveySerializer(serializers.Serializer):
-    user_id = serializers.IntegerField(required=True)
-    survey_id = serializers.IntegerField(required=True)
-    question_id = serializers.IntegerField(required=True)
-    answer_id = serializers.IntegerField(required=True)
+# class CompleteSurveySerializer(serializers.Serializer):
+#     user_id = serializers.IntegerField(required=True)
+#     survey_id = serializers.IntegerField(required=True)
+#     question_id = serializers.IntegerField(required=True)
+#     answer_id = serializers.IntegerField(required=True)
 
 
 class SurveySerializer(serializers.Serializer):
@@ -45,3 +45,14 @@ class AnswerSerializer(serializers.Serializer):
 
 class GetOneSurveySerializer(serializers.Serializer):
     survey_id = serializers.IntegerField(required=True)
+
+
+class CompleteSurveyQuestionsSerializer(serializers.Serializer):
+    question_id = serializers.IntegerField(required=True)
+    answer_id = serializers.IntegerField(required=True)
+
+
+class CompleteSurveySerializer(serializers.Serializer):
+    questions = CompleteSurveyQuestionsSerializer(required=True, many=True)
+    survey_id = serializers.IntegerField(required=True)
+    user_id = serializers.IntegerField(required=True)

@@ -1,8 +1,10 @@
 import datetime
 import json
+from surveys.serializers import CompleteSurveySerializer
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.http.response import HttpResponseBadRequest
 
 from surveys.logic import allow_only
 from surveys.logic import validate
@@ -13,8 +15,9 @@ from surveys.settings import URL_LOGIN_REDIRECT
 
 @allow_only("POST")
 @login_required(login_url=URL_LOGIN_REDIRECT)
-# @validate(CompleteSurveySerializer)
+@validate(CompleteSurveySerializer)
 def new_complete_survey(request):
+    # raise Exception
     complete_surveys_json = json.loads(request.body)
     questions = []
     complete_survey = CompleteSurvey(
