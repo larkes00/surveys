@@ -26,8 +26,7 @@ def view_surveys_list(request):
     return render(request, "surveys/surveys_list.html", {"surveys": surveys})
 
 
-# TODO: починить
-# @allow_only("GET")
+@allow_only("GET")
 @login_required(login_url=URL_LOGIN_REDIRECT)
 def view_survey(request, survey_id):
     survey_obj = get_survey(survey_id)

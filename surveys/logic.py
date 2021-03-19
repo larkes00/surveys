@@ -142,10 +142,10 @@ def parse_answer(answer):
 
 def allow_only(methods):
     def decorator(handler):
-        def new_handler(request):
+        def new_handler(request, *args, **kwargs):
             if request.method not in methods:
                 return HttpResponseNotAllowed(methods)
-            return handler(request)
+            return handler(request, *args, **kwargs)
 
         return new_handler
 
