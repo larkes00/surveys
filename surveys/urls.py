@@ -38,11 +38,10 @@ urlpatterns = [
     path("questions/", views.question_list, name="questions"),
     path("question/<int:question_id>/", views.survey, name="question"),
     path("surveys/create/", views.new_survey, name="create_survey"),
-    # path("user/create/", views.new_user, name="create_user"),
     path("answer/create/", views.new_answer, name="new_answer"),
     path("question/create/", views.new_question, name="new_question"),
     path("survey_area/create/", views.new_survey_area, name="new_survey_area"),
-    # path("surveys/delete/", views.del_survey, name="del_survey"),
+    path("surveys/delete/", views.del_survey, name="del_survey"),
     # path("question/delete/", views.del_question, name="del_question"),
     path("answer/delete/", views.del_answer, name="del_answer"),
     path("surveyarea/delete/", views.del_survey_area, name="del_survey_area"),
@@ -51,5 +50,4 @@ urlpatterns = [
     path("signup/", views.true_signup, name="signup"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("logout/", views.logout, name="logout"),
-    # path("surveys/edit/", views.edit_survey, name="edit_survey"),
 ]

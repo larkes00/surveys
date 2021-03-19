@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
+from django.http.response import HttpResponseForbidden
 from django.shortcuts import render
 
 from surveys.logic import allow_only
@@ -76,15 +77,14 @@ def new_survey(request):
     return JsonResponse({"data": body})
 
 
-# TODO: додумать
-# @allow_only("POST")
-# @login_required(login_url=URL_LOGIN_REDIRECT)
-# def del_survey(request):
-#     body = json.loads(request.body)
-#     survey_obj = get_survey(body["survey_id"])
-#     if survey_obj is None:
-#         return HttpResponseNotFound("No such survey")
-#     if survey_obj.author_id == session.user_id:
-#         survey_obj.delete()
-#         return JsonResponse({"data": survey_obj.id})
-#     return HttpResponseForbidden("You cannot delete someone else's survey")
+@allow_only("POST")
+@login_required(login_url=URL_LOGIN_REDIRECT)
+def del_survey(request):
+    body = json.loads(request.body)
+    survey_obj = get_survey(body["survey_id"])
+    if survey_obj is None:
+        return HttpResponseNotFound("No such survey")
+    if survey_obj.author_id == request.user.id:
+        survey_obj.delete()
+        return JsonResponse({"data": survey_obj.id})
+    return HttpResponseForbidden("You cannot delete someone else's survey")

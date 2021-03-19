@@ -9,8 +9,8 @@ from surveys.models import SurveyArea
 # from surveys.models import SurveyQuestion
 
 
-def create_user(login: str, password: str = "12345678"):
-    user = User.objects.create_user(username=login, password=password)
+def create_user(login: str, password: str = "12345678", id: int = 1):
+    user = User.objects.create_user(id=id, username=login, password=password)
     user.save()
     return user
 

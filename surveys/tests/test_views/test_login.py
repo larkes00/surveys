@@ -28,21 +28,12 @@ def test_successful_login(client):
 
 # @pytest.mark.django_db
 # def test_login_wrong_login(client):
-#     user = create_user(login="Bad12345", password="12345")
+#     create_user(login="TestUser")
 #     response = client.post(
 #         get_login_url(),
-#         {"login": "-1", "password": "12345"},
+#         {"login": "WrongTestUser", "password": "12345678"},
 #         content_type="application/json",
 #     )
 #     assert response.status_code == 404
 
 
-# @pytest.mark.django_db
-# def test_login_wrong_password(client):
-#     user = create_user(login="Bad12345", password="12345")
-#     response = client.post(
-#         get_login_url(),
-#         {"login": "Bad12345", "password": "wrong_password"},
-#         content_type="application/json",
-#     )
-#     assert response.status_code == 403

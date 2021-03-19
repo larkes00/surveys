@@ -64,15 +64,11 @@ def true_login(request):
 @validate(SignupSerializer)
 def true_signup(request):
     body = json.loads(request.body)
-    try:
-        DjangoUser.objects.get(username=body["login"])
-    except DjangoUser.DoesNotExist:
-        user = DjangoUser.objects.create_user(
-            username=body["login"], password=body["password"]
-        )
-        user.save()
-        return JsonResponse({"data": body})
-    return HttpResponseBadRequest
+    user = DjangoUser.objects.create_user(
+        username=body["login"], password=body["password"]
+    )
+    user.save()
+    return JsonResponse({"data": body})
 
 
 @allow_only("GET")
