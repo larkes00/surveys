@@ -35,5 +35,3 @@ def test_successful_login(client):
 #         content_type="application/json",
 #     )
 #     assert response.status_code == 404
-
-

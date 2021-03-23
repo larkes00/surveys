@@ -157,9 +157,7 @@ def test_not_author_delete_survey(client):
     create_survey(name="TestSurvey", author_id=1, area_id=1)
     response = client.post(
         get_survey_delete_url(),
-        {  # fmt off
-            "survey_id": 1
-        },  # fmt on
+        {"survey_id": 1},  # fmt off  # fmt on
         content_type="application/json",
     )
     assert response.status_code == 403
