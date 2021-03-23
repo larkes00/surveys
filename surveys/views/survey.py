@@ -16,6 +16,7 @@ from surveys.models import Answer
 from surveys.models import Survey
 from surveys.models import SurveyQuestion
 from surveys.serializers import GetOneSurveySerializer
+from surveys.serializers import SurveyDeleteSerializer
 from surveys.serializers import SurveySerializer
 from surveys.settings import URL_LOGIN_REDIRECT
 
@@ -78,6 +79,7 @@ def new_survey(request):
 
 @allow_only("POST")
 @login_required(login_url=URL_LOGIN_REDIRECT)
+@validate(SurveyDeleteSerializer)
 def del_survey(request):
     body = json.loads(request.body)
     survey_obj = get_survey(body["survey_id"])

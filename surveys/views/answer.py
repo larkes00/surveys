@@ -12,6 +12,7 @@ from surveys.logic import get_survey
 from surveys.logic import get_survey_question
 from surveys.logic import validate
 from surveys.models import Answer
+from surveys.serializers import AnswerDeleteSerializer
 from surveys.serializers import AnswerSerializer
 from surveys.settings import URL_LOGIN_REDIRECT
 
@@ -28,6 +29,7 @@ def new_answer(request):
 
 @allow_only("POST")
 @login_required(login_url=URL_LOGIN_REDIRECT)
+@validate(AnswerDeleteSerializer)
 def del_answer(request):
     body = json.loads(request.body)
     answer = get_answer(body["answer_id"])

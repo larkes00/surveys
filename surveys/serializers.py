@@ -35,7 +35,7 @@ class SurveyAreaSerializer(serializers.Serializer):
 
 
 class SurveyAreaDeleteSerializer(serializers.Serializer):
-    id = serializers.IntegerField(required=True)
+    survey_area_id = serializers.IntegerField(required=True)
 
 
 class AnswerSerializer(serializers.Serializer):
@@ -56,3 +56,16 @@ class CompleteSurveySerializer(serializers.Serializer):
     questions = CompleteSurveyQuestionsSerializer(required=True, many=True)
     survey_id = serializers.IntegerField(required=True)
     user_id = serializers.IntegerField(required=True)
+
+
+class QuestionDeleteSerializer(serializers.Serializer):
+    question_id = serializers.IntegerField(required=True)
+
+
+class SurveyDeleteSerializer(serializers.Serializer):
+    survey_id = serializers.IntegerField(required=True)
+
+
+class AnswerDeleteSerializer(serializers.Serializer):
+    answer_id = serializers.IntegerField(required=True)
+    survey_id = serializers.IntegerField(required=True)
