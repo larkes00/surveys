@@ -5,29 +5,40 @@
     function onClick() {
         var questionDiv = document.getElementsByClassName('question')
         let list = []
+        var answer_checked = false;
         for (var i = 0; i < questionDiv.length; i++) {
             answerDiv = questionDiv[i].getElementsByClassName('answer')
+            var checked = false;
             for (var j = 0; j < answerDiv.length; j++){
                 inputCheckbox = answerDiv[j].getElementsByTagName('input')
                 for (var k = 0; k < inputCheckbox.length; k++) {
                     if (inputCheckbox[k].checked) {
                         list.push({question_id: questionDiv[i].id , answer_id: answerDiv[j].id})
+                        checked = true;
+                        break;
                     }
                 }
             }
-        }
-        fetch(
-            'http://localhost:8000/complete_survey/create/',
-                {
-                    method: 'POST',
-                    headers: new Headers(),
-                    body: JSON.stringify({questions: list, survey_id: '{{ survey.id }}', user_id: '{{ user.id }}'})
+            if (checked == false) {
+                    alert("You are not answer for all questions")
+                    answer_checked = true;
+                    break;
                 }
-            ).then((res) => {
-                console.log(res)
-                if (res.status == 500) {
-                    alert("Bad")
-                }})
+        }
+        if (answer_checked == true) {
+            fetch(
+                'http://localhost:8000/complete_survey/create/',
+                    {
+                        method: 'POST',
+                        headers: new Headers(),
+                        body: JSON.stringify({questions: list, survey_id: '{{ survey.id }}', user_id: '{{ user.id }}'})
+                    }
+                ).then((res) => {
+                    console.log(res)
+                    if (res.status == 500) {
+                        alert("Bad")
+                    }})
+        }
         
     }
 </script>
