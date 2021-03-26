@@ -3,7 +3,7 @@ import pytest
 
 
 def get_singup_url():
-    return urls.reverse("signup")
+    return urls.reverse("user_signup")
 
 
 @pytest.mark.django_db
