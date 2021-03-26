@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
 
-from surveys.models import Answer, SurveyQuestion
+from surveys.models import Answer
 from surveys.models import Question
 from surveys.models import Survey
 from surveys.models import SurveyArea
+from surveys.models import SurveyQuestion
 
 
 # from surveys.models import SurveyQuestion

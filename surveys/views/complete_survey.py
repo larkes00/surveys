@@ -3,7 +3,6 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.http.response import HttpResponseBadRequest
 
 from surveys.logic import allow_only
 from surveys.logic import validate

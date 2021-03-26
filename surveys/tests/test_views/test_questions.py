@@ -3,11 +3,12 @@ import pytest
 
 from surveys.logic import get_question
 from surveys.logic import parse_questions
-from surveys.tests.test_views.helpers import create_answer, create_survey_question
+# from surveys.tests.test_views.helpers import create_survey_question
+from surveys.tests.test_views.helpers import create_answer
 from surveys.tests.test_views.helpers import create_question
 from surveys.tests.test_views.helpers import create_survey
 from surveys.tests.test_views.helpers import create_survey_area
-# from surveys.tests.test_views.helpers import create_survey_question
+from surveys.tests.test_views.helpers import create_survey_question
 from surveys.tests.test_views.helpers import create_user
 
 
@@ -37,18 +38,17 @@ def test_questions_list(client):
     assert response.status_code == 200
 
 
-# @pytest.mark.django_db
-# def test_question_create(client):
-#     create_user(login="TestUser")
-#     client.login(username="TestUser", password="12345678")
-#     create_question(content="TestQuestion", correct_answer_id=1, author_id=1)
-#     create_answer(content="Nothing", question_id=1)
-#     respone = client.post(
-#         question_create_url(),
-#         {"content": "What is it?", "correct_answer_id": 1},
-#         content_type="application/json",
-#     )
-#     assert respone.status_code == 200
+@pytest.mark.django_db
+def test_question_create(client):
+    create_user(login="TestUser")
+    client.login(username="TestUser", password="12345678")
+    create_answer(content="Nothing", question_id=1)
+    respone = client.post(
+        question_create_url(),
+        {"content": "TestQuestion2", "correct_answer_id": 1},
+        content_type="application/json",
+    )
+    assert respone.status_code == 200
 
 
 @pytest.mark.django_db

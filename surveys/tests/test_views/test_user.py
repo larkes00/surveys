@@ -16,13 +16,10 @@ def test_user_list_only_get(client):
     assert response.status_code == 405
 
 
-# @pytest.mark.django_db
-# def test_user_list_successful(client):
-#     create_user(id=1, login="Bad12345")
-#     create_user(id=2, login="Good12345")
-#     response = client.get(get_user_list_url())
-#     assert response.status_code == 200
-#     assert response.json()["data"] == [
-#         {"id": 1, "login": "Bad12345", "password": "12345", "name": "John"},
-#         {"id": 2, "login": "Good12345", "password": "12345", "name": "John"},
-#     ]
+@pytest.mark.django_db
+def test_user_list_successful(client):
+    create_user(id=1, login="TestUser1")
+    client.login(username="TestUser1", password="12345678")
+    create_user(id=2, login="TestUser2")
+    response = client.get(get_user_list_url())
+    assert response.status_code == 200

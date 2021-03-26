@@ -1,8 +1,6 @@
 from django import urls
 import pytest
 
-from surveys.tests.test_views.helpers import create_user
-
 
 def get_singup_url():
     return urls.reverse("signup")

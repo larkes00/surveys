@@ -17,7 +17,7 @@ def get_login_url():
 
 @pytest.mark.django_db
 def test_successful_login(client):
-    user = create_user(login="TestUser", password="12345678")
+    create_user(login="TestUser", password="12345678")
     response = client.post(
         get_login_url(),
         {"login": "TestUser", "password": "12345678"},

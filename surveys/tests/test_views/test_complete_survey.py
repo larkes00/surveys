@@ -1,5 +1,4 @@
 from django import urls
-from django.contrib.auth.models import User
 import pytest
 
 from surveys.tests.test_views.helpers import create_answer
@@ -49,4 +48,3 @@ def test_complete_survey_successful(client):
         content_type="application/json",
     )
     assert response.status_code == 200
-    # TODO: сделать проверку выходных данных

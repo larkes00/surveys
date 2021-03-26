@@ -5,7 +5,6 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User as DjangoUser
-from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
 from django.shortcuts import redirect
@@ -14,8 +13,6 @@ from django.shortcuts import render
 from surveys.logic import allow_only
 from surveys.logic import parse_users
 from surveys.logic import validate
-# from surveys.logic import get_user
-# from surveys.logic import parse_users
 from surveys.serializers import LoginSerializer
 from surveys.serializers import SignupSerializer
 from surveys.settings import URL_LOGIN_REDIRECT
