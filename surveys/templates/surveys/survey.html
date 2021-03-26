@@ -21,9 +21,10 @@
             }
             if (checked == false) {
                     alert("You are not answer for all questions")
-                    answer_checked = true;
+                    answer_checked = false;
                     break;
-                }
+            }
+            answer_checked = true;
         }
         if (answer_checked == true) {
             fetch(
