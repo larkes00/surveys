@@ -58,29 +58,30 @@ def test_survey_list(client):
     assert response.status_code == 200
 
 
-# @pytest.mark.django_db
-# def test_successful_get_one_survey(client):
-#     create_user(login="TestUser")
-#     client.login(username="TestUser", password="12345678")
-#     create_survey_area("Anything")
-#     create_survey(name="Survey", author_id=1, area_id=1)
-#     response = client.get(get_survey_get_one_url(1))
-#     assert response.status_code == 200
-#     assert response.json()["data"] == {
-#         "id": 1,
-#         "name": "Survey",
-#         "author_id": 1,
-#         "area_id": 1,
-#         "type": "Formal",
-#     }
+@pytest.mark.django_db
+def test_successful_get_one_survey(client):
+    create_user(login="TestUser")
+    client.login(username="TestUser", password="12345678")
+    create_survey_area("Anything")
+    create_survey(name="Survey", author_id=1, area_id=1)
+    response = client.get(get_survey_get_one_url(1))
+    # print(response.body())
+    assert response.status_code == 200
+    assert response.json()["data"] == {
+        "id": 1,
+        "name": "Survey",
+        "author_id": 1,
+        "area_id": 1,
+        "type": "Formal",
+    }
 
 
-# @pytest.mark.django_db
-# def test_unsuccessful_get_one_survey(client):
-#     create_user(login="TestUser")
-#     client.login(username="TestUser", password="12345678")
-#     response = client.get(get_survey_get_one_url(10000))
-#     assert response.status_code == 404
+@pytest.mark.django_db
+def test_unsuccessful_get_one_survey(client):
+    create_user(login="TestUser")
+    client.login(username="TestUser", password="12345678")
+    response = client.get(get_survey_get_one_url(10000))
+    assert response.status_code == 404
 
 
 @pytest.mark.django_db

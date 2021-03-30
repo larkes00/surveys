@@ -96,7 +96,7 @@ def test_delete_question_used(client):
     question_obj = parse_questions(get_question(question_id=question.id))
     assert question_obj == {  # fmt: off
         "id": 1,
-        "question name": "TestQuestion?",
+        "content": "TestQuestion?",
         "author_id": 1,
     }  # fmt: on
 
@@ -141,6 +141,6 @@ def test_delete_question_not_author(client):
     question_obj = parse_questions(get_question(question_id=question.id))
     assert question_obj == {  # fmt: off
         "id": 1,
-        "question name": "How are you?",
+        "content": "How are you?",
         "author_id": 2,
     }  # fmt: on

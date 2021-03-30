@@ -181,7 +181,7 @@ def allow_only(methods):
 
 def validate(serializer_cls):
     def decorator(handler):
-        def new_handler(request):
+        def new_handler(request, *args, **kwargs):
             try:
                 request_body = json.loads(request.body)
             except (TypeError, JSONDecodeError):
@@ -189,7 +189,7 @@ def validate(serializer_cls):
             serializer = serializer_cls(data=request_body)
             if not serializer.is_valid():
                 return HttpResponseBadRequest(json.dumps(serializer.errors))
-            return handler(request)
+            return handler(request, *args, **kwargs)
 
         return new_handler
 
