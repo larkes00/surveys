@@ -74,13 +74,27 @@ def get_user(username):
 
 
 def parse_surveys(surveys):
-    return {
-        "id": surveys.id,
-        "author_id": surveys.author_id,
-        "area_id": surveys.area_id,
-        "name": surveys.name,
-        "type": surveys.type,
-    }
+    response_list = []
+    try:
+        for survey in surveys:
+            response_list.append(
+                {
+                    "id": survey.id,
+                    "author_id": survey.author_id,
+                    "area_id": survey.area_id,
+                    "name": survey.name,
+                    "type": survey.type,
+                }
+            )
+    except TypeError:
+        return {
+            "id": surveys.id,
+            "author_id": surveys.author_id,
+            "area_id": surveys.area_id,
+            "name": surveys.name,
+            "type": surveys.type,
+        }
+    return response_list
 
 
 def parse_users(users):
@@ -108,14 +122,14 @@ def parse_questions(questions):
             response_list.append(
                 {
                     "id": question.id,
-                    "question name": question.content,
+                    "content": question.content,
                     "author_id": question.author_id,
                 }
             )
     except TypeError:
         return {
             "id": questions.id,
-            "question name": questions.content,
+            "content": questions.content,
             "author_id": questions.author_id,
         }
     return response_list
@@ -133,12 +147,24 @@ def parse_survey_area(survey_areas):
     return response_list
 
 
-def parse_answer(answer):
-    return {
-        "id": answer.id,
-        "content": answer.content,
-        "question_id": answer.question_id,
-    }
+def parse_answer(answers):
+    response_list = []
+    try:
+        for answer in answers:
+            response_list.append(  # fmt: off
+                {
+                    "id": answer.id,
+                    "content": answer.content,
+                    "question_id": answer.question_id,
+                }
+            )  # fmt: on
+    except TypeError:
+        return {
+            "id": answers.id,
+            "content": answers.content,
+            "question_id": answers.question_id,
+        }
+    return response_list
 
 
 def allow_only(methods):
