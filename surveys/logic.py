@@ -1,6 +1,7 @@
 import json
 from json import JSONDecodeError
 
+from django.contrib.auth.models import User
 from django.http.response import HttpResponseBadRequest
 from django.http.response import HttpResponseNotAllowed
 
@@ -63,13 +64,13 @@ def get_survey_area(survey_area_id):
         return survey_area
 
 
-# def get_user(login):
-#     try:
-#         user = User.objects.get(login=login)
-#     except User.DoesNotExist:
-#         return None
-#     else:
-#         return user
+def get_user(username):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return None
+    else:
+        return user
 
 
 def parse_surveys(surveys):

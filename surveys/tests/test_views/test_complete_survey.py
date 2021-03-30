@@ -1,3 +1,4 @@
+from surveys.models import CompleteSurvey
 from django import urls
 import pytest
 

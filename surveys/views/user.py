@@ -7,10 +7,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User as DjangoUser
 from django.http import HttpResponseNotFound
 from django.http import JsonResponse
+from django.http.response import HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.shortcuts import render
 
-from surveys.logic import allow_only
+from surveys.logic import allow_only, get_user
 from surveys.logic import parse_users
 from surveys.logic import validate
 from surveys.serializers import LoginSerializer
@@ -61,6 +62,9 @@ def true_login(request):
 @validate(SignupSerializer)
 def true_signup(request):
     body = json.loads(request.body)
+    user_exists = get_user(body["login"])
+    if user_exists is not None:
+        return HttpResponseBadRequest("")
     user = DjangoUser.objects.create_user(
         username=body["login"], password=body["password"]
     )

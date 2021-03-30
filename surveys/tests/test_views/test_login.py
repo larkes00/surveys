@@ -27,6 +27,16 @@ def test_successful_login(client):
 
 
 @pytest.mark.django_db
+def test_unsuccessful_login(client):
+    response = client.post(
+        get_login_url(),
+        {"login": "TestUser", "password": "12345678"},
+        content_type="application/json",
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
 def test_login_wrong_login(client):
     create_user(login="TestUser")
     response = client.post(

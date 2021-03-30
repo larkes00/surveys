@@ -3,7 +3,6 @@ import pytest
 
 from surveys.logic import get_question
 from surveys.logic import parse_questions
-# from surveys.tests.test_views.helpers import create_survey_question
 from surveys.tests.test_views.helpers import create_answer
 from surveys.tests.test_views.helpers import create_question
 from surveys.tests.test_views.helpers import create_survey
