@@ -35,10 +35,10 @@
                         body: JSON.stringify({questions: list, survey_id: '{{ survey.id }}', user_id: '{{ user.id }}'})
                     }
                 ).then((res) => {
-                    console.log(res)
-                    if (res.status == 500) {
-                        alert("Bad")
-                    }})
+                    return res.text();
+                }).then((data) =>{
+                    alert("Server error:" + data)
+                })
         }
         
     }
