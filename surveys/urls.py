@@ -18,7 +18,6 @@ from django.urls import path
 from django.urls.conf import include  # noqa: F401 pylint: disable=W0611
 
 from surveys import views
-from surveys.views.complete_survey import complete_survey_view
 
 
 urlpatterns = [
@@ -52,7 +51,7 @@ urlpatterns = [
     path("logout/", views.logout, name="logout"),
     path(
         "view/complete_survey/user/<int:user_id>/",
-        views.complete_survey_view,
-        name="complete_survey_view",
+        views.view_complete_survey,
+        name="view_complete_survey",
     ),
 ]

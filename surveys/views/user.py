@@ -11,7 +11,8 @@ from django.http.response import HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.shortcuts import render
 
-from surveys.logic import allow_only, get_user
+from surveys.logic import allow_only
+from surveys.logic import get_user
 from surveys.logic import parse_users
 from surveys.logic import validate
 from surveys.serializers import LoginSerializer

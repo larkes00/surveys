@@ -3,17 +3,15 @@
 {% block content %}
     {% for complete_survey in complete_survey_question %}
         {% for survey in survey_obj %}
-            <p>{{ survey.name }}</p>
+            <p>Survey name {{ survey.name }}</p>
+            <p>-----------------------</p>
             {% for question in question_obj %}
-                {% if complete_survey.question_id == question.id%}
-                    <p>{{ question.content }}</p>
-                {% endif %}
                 {% for answer in answer_obj %}
-                    {% if complete_survey.answer_id == answer.id %}
-                        <p>{{ answer.content }}</p>
-                    {% endif %}
+                    <p>Question {{ question.content }}</p>
+                    <p>Answer {{ answer.content }}</p>
                 {% endfor %}
             {% endfor %}
+            <p>-----------------------</p>
         {% endfor %}
     {% endfor %}
 {% endblock %}
