@@ -1,11 +1,14 @@
 import json
 from json import JSONDecodeError
+from typing import Type
 
 from django.contrib.auth.models import User
 from django.http.response import HttpResponseBadRequest
 from django.http.response import HttpResponseNotAllowed
 
 from surveys.models import Answer
+from surveys.models import CompleteSurvey
+from surveys.models import CompleteSurveyQuestion
 from surveys.models import Question
 from surveys.models import Survey
 from surveys.models import SurveyArea
@@ -165,6 +168,49 @@ def parse_answer(answers):
             "question_id": answers.question_id,
         }
     return response_list
+
+
+def parse_complete_survey(complete_surveys):
+    response_list = []
+    try:
+        for complete_survey in complete_surveys:
+            response_list.append(
+                {
+                    "id": complete_survey.id,
+                    "survey_id": complete_survey.survey_id,
+                    "user_id": complete_survey.user_id,
+                    "completed_at": complete_survey.completed_at,
+                }
+            )
+    except CompleteSurvey.DoesNotExist:
+        return None
+    else:
+        return response_list
+
+
+def parse_complete_survey_question(complete_surveys_questions):
+    response_list = []
+    try:
+        for complete_survey_question in complete_surveys_questions:
+            response_list.append(
+                {
+                    "id": complete_survey_question.id,
+                    "answer_id": complete_survey_question.answer_id,
+                    "complete_survey_id": complete_survey_question.complete_survey_id,
+                    "question_id": complete_survey_question.question_id,
+                }
+            )
+    except CompleteSurveyQuestion.DoesNotExist:
+        return None
+    except TypeError:
+        return {
+            "id": complete_surveys_questions.id,
+            "answer_id": complete_surveys_questions.answer_id,
+            "complete_survey_id": complete_surveys_questions.complete_survey_id,
+            "question_id": complete_surveys_questions.question_id,
+        }
+    else:
+        return response_list
 
 
 def allow_only(methods):
