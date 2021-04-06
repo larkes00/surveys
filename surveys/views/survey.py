@@ -53,7 +53,6 @@ def view_survey(request, survey_id):
 
 @allow_only("GET")
 @login_required(login_url=URL_LOGIN_REDIRECT)
-@validate(GetOneSurveySerializer)
 def survey(request, survey_id):
     survey_obj = get_survey(survey_id)
     if survey_obj is None:

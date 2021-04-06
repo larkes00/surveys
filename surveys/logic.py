@@ -230,8 +230,10 @@ def validate(serializer_cls):
         def new_handler(request, *args, **kwargs):
             try:
                 request_body = json.loads(request.body)
-            except (TypeError, JSONDecodeError):
-                return HttpResponseBadRequest()
+            except (TypeError, JSONDecodeError) as e:
+                return HttpResponseBadRequest(
+                    f"Error while parsing response body: {e}"
+                )
             serializer = serializer_cls(data=request_body)
             if not serializer.is_valid():
                 return HttpResponseBadRequest(json.dumps(serializer.errors))

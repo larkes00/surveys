@@ -65,7 +65,6 @@ def test_successful_get_one_survey(client):
     create_survey_area("Anything")
     create_survey(name="Survey", author_id=1, area_id=1)
     response = client.get(get_survey_get_one_url(1))
-    # print(response.body())
     assert response.status_code == 200
     assert response.json()["data"] == {
         "id": 1,
