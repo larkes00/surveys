@@ -2,19 +2,24 @@
 
 {% block content %}
     {% for complete_survey in complete_surveys %}
-        {% for complete_survey_question in complete_survey_questions %}
-            {% for survey in survey_obj %}
-                {% if forloop.first %}
-                    <p>Survey name {{ survey.name }}</p>
-                    <p>-----------------------</p>
-                {% endif %}
-                {% for question in question_obj %}
-                    {% if question.id == complete_survey_question.question_id %}
-                        {{ question.content }}
+        {% for survey in survey_obj %}
+            {% if complete_survey.survey_id == survey.id %}
+                <h1>{{ survey.name }}</h1>
+                {% for complete_survey_question in complete_survey_questions %}
+                    {% if complete_survey_question.complete_survey_id == complete_survey.id %}
+                        {% for question in question_obj %}
+                            {% if complete_survey_question.question_id == question.id %}
+                                <p>{{question.content}}</p>
+                                {% for answer in answer_obj %}
+                                    {% if complete_survey_question.answer_id == answer.id %}
+                                        <p>{{ answer.content }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
                     {% endif %}
                 {% endfor %}
-                <p>-----------------------</p>
-            {% endfor %}
+            {% endif %}
         {% endfor %}
     {% endfor %}
 {% endblock %}
