@@ -1,7 +1,6 @@
 from django import urls
 import pytest
 
-from surveys.models import CompleteSurvey
 from surveys.tests.test_views.helpers import create_answer
 from surveys.tests.test_views.helpers import create_question
 from surveys.tests.test_views.helpers import create_survey

@@ -53,7 +53,9 @@ def view_complete_survey(request, user_id):
     complete_surveys = parse_complete_survey(
         CompleteSurvey.objects.filter(user_id=user_id)
     )
-    complete_survey_questions_obj = parse_complete_survey_question(CompleteSurveyQuestion.objects.all())
+    complete_survey_questions_obj = parse_complete_survey_question(
+        CompleteSurveyQuestion.objects.all()
+    )
     complete_survey_question_list = []
     for complete_survey_question in complete_survey_questions_obj:
         for complete_survey in complete_surveys:
@@ -67,12 +69,12 @@ def view_complete_survey(request, user_id):
     answer_list_obj = []
     for complete_survey_question in complete_survey_question_list:
         answer_list_obj.append(
-            Answer.objects.get(id=complete_survey_question["answer_id"])  # Проблема
+            Answer.objects.get(id=complete_survey_question["answer_id"])
         )
     question_list_obj = []
     for complete_survey_question in complete_survey_question_list:
         question_list_obj.append(
-            Question.objects.get(id=complete_survey_question["question_id"])  # Проблема
+            Question.objects.get(id=complete_survey_question["question_id"])
         )
     return render(
         request,
