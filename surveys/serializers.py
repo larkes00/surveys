@@ -43,10 +43,6 @@ class AnswerSerializer(serializers.Serializer):
     question_id = serializers.IntegerField(required=True)
 
 
-class GetOneSurveySerializer(serializers.Serializer):
-    survey_id = serializers.IntegerField(required=True)
-
-
 class CompleteSurveyQuestionsSerializer(serializers.Serializer):
     question_id = serializers.IntegerField(required=True)
     answer_id = serializers.IntegerField(required=True)

@@ -1,17 +1,20 @@
 {% extends 'surveys/base.html' %}
 
 {% block content %}
-    {% for complete_survey in complete_survey_question %}
-        {% for survey in survey_obj %}
-            <p>Survey name {{ survey.name }}</p>
-            <p>-----------------------</p>
-            {% for question in question_obj %}
-                {% for answer in answer_obj %}
-                    <p>Question {{ question.content }}</p>
-                    <p>Answer {{ answer.content }}</p>
+    {% for complete_survey in complete_surveys %}
+        {% for complete_survey_question in complete_survey_questions %}
+            {% for survey in survey_obj %}
+                {% if forloop.first %}
+                    <p>Survey name {{ survey.name }}</p>
+                    <p>-----------------------</p>
+                {% endif %}
+                {% for question in question_obj %}
+                    {% if question.id == complete_survey_question.question_id %}
+                        {{ question.content }}
+                    {% endif %}
                 {% endfor %}
+                <p>-----------------------</p>
             {% endfor %}
-            <p>-----------------------</p>
         {% endfor %}
     {% endfor %}
 {% endblock %}

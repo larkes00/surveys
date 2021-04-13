@@ -53,29 +53,32 @@ def view_complete_survey(request, user_id):
     complete_surveys = parse_complete_survey(
         CompleteSurvey.objects.filter(user_id=user_id)
     )
-    complete_survey_questions = parse_complete_survey_question(
+    complete_survey_questions = parse_complete_survey_question(  # Проблема
         CompleteSurveyQuestion.objects.filter(
             complete_survey_id=complete_surveys[0]["id"]
         )
     )
     survey_list_obj = []
     for complete_survey in complete_surveys:
-        survey_list_obj.append(Survey.objects.get(id=complete_survey["survey_id"]))
+        survey_list_obj.append(
+            Survey.objects.get(id=complete_survey["survey_id"])
+        )  # Проблема
     answer_list_obj = []
     for complete_survey_question in complete_survey_questions:
         answer_list_obj.append(
-            Answer.objects.get(id=complete_survey_question["answer_id"])
+            Answer.objects.get(id=complete_survey_question["answer_id"])  # Проблема
         )
     question_list_obj = []
     for complete_survey_question in complete_survey_questions:
         question_list_obj.append(
-            Question.objects.get(id=complete_survey_question["question_id"])
+            Question.objects.get(id=complete_survey_question["question_id"])  # Проблема
         )
     return render(
         request,
         "surveys/complete_survey.html",
         {
-            "complete_survey_question": complete_survey_questions,
+            "complete_surveys": complete_surveys,
+            "complete_survey_questions": complete_survey_questions,
             "question_obj": parse_questions(question_list_obj),
             "answer_obj": parse_answer(answer_list_obj),
             "survey_obj": parse_surveys(survey_list_obj),
