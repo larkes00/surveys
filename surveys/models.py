@@ -19,7 +19,7 @@ class CompleteSurvey(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     survey = models.ForeignKey("Survey", on_delete=models.CASCADE)
-    completed_at = models.DateField(null=True)
+    completed_at = models.DateTimeField(null=True)
 
 
 class Survey(models.Model):
