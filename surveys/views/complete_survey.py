@@ -93,7 +93,7 @@ def view_complete_survey(request, user_id):
     )
 
 
-def view_dashboard(request):
+def view_leaderboard(request):
     complete_survey_list = []
     complete_surveys = parse_complete_survey(CompleteSurvey.objects.all())
     for complete_survey in complete_surveys:

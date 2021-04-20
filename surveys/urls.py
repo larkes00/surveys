@@ -54,5 +54,5 @@ urlpatterns = [
         views.view_complete_survey,
         name="view_complete_survey",
     ),
-    path("view/dashboard/", views.view_dashboard, name="dashboard"),
+    path("view/leaderboard/", views.view_leaderboard, name="leaderboard"),
 ]

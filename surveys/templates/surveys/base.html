@@ -11,34 +11,38 @@
 {% block navbar %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="http://localhost:8000/view/surveys/">Home</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            {% if not request.user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="http://localhost:8000/view/login/">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="http://localhost:8000/view/signup/">Sign up</a>
-          </li>
-            {% else %}
-            <li class="nav-item">
-                <a class="nav-link" href="http://localhost:8000/view/surveys/">Surveys</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="http://localhost:8000/view/complete_survey/user/{{ user.id }}">Complete_surveys</a>
-            </li>
-          <li class="nav-item">
-            <a class="nav-link" href="http://localhost:8000/logout/">Logout</a>
-          </li>
-            {% endif %}
-        </ul>
-      </div>
+        <a class="navbar-brand" href="http://localhost:8000/view/surveys/">Home</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                {% if not request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8000/view/login/">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8000/view/signup/">Sign up</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8000/view/surveys/">Surveys</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8000/view/complete_survey/user/{{ user.id }}">Complete_surveys</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8000/view/leaderboard/">Leaderboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8000/logout/">Logout</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
-  </nav>
+</nav>
 {% endblock %}
 {% block content %}{% endblock %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
