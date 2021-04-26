@@ -8,8 +8,8 @@ from django.shortcuts import render
 
 from surveys.logic import allow_only
 from surveys.logic import get_survey
-from surveys.logic import parse_surveys
-from surveys.logic import parse_users
+from surveys.logic import parse_survey
+from surveys.logic import parse_user
 from surveys.logic import validate
 from surveys.models import Answer
 from surveys.models import Survey
@@ -37,7 +37,7 @@ def view_survey(request, survey_id):
         questions.append(survey_question.question)
     for answer in Answer.objects.all():
         answers.append(answer)
-    user = parse_users(request.user)
+    user = parse_user(request.user)
     return render(
         request,
         "surveys/survey.html",
@@ -56,7 +56,7 @@ def survey(request, survey_id):
     survey_obj = get_survey(survey_id)
     if survey_obj is None:
         return HttpResponseNotFound("No such survey")
-    return JsonResponse({"data": parse_surveys(survey_obj)})
+    return JsonResponse({"data": parse_survey(survey_obj)})
 
 
 @allow_only("POST")

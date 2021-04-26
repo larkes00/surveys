@@ -2,7 +2,7 @@ from django import urls
 import pytest
 
 from surveys.logic import get_survey
-from surveys.logic import parse_surveys
+from surveys.logic import parse_survey
 from surveys.tests.test_views.helpers import create_survey
 from surveys.tests.test_views.helpers import create_survey_area
 from surveys.tests.test_views.helpers import create_user
@@ -66,7 +66,8 @@ def test_successful_get_one_survey(client):
     create_survey(name="Survey", author_id=1, area_id=1)
     response = client.get(get_survey_get_one_url(1))
     assert response.status_code == 200
-    assert response.json()["data"] == {
+    survey = parse_survey(get_survey(survey_id=1))
+    assert survey == {
         "id": 1,
         "name": "Survey",
         "author_id": 1,
@@ -99,7 +100,7 @@ def test_create_survey(client):
         content_type="application/json",
     )
     assert response.status_code == 200
-    survey_obj = parse_surveys(get_survey(survey_id=1))
+    survey_obj = parse_survey(get_survey(survey_id=1))
     assert survey_obj == {
         "id": 1,
         "author_id": 1,

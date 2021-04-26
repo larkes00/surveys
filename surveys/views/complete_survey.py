@@ -8,11 +8,11 @@ from django.shortcuts import render
 
 from surveys.logic import allow_only
 from surveys.logic import parse_answer
-from surveys.logic import parse_complete_survey
-from surveys.logic import parse_complete_survey_question
-from surveys.logic import parse_questions
-from surveys.logic import parse_surveys
-from surveys.logic import parse_users
+from surveys.logic import parse_complete_survey_questions
+from surveys.logic import parse_complete_surveys
+from surveys.logic import parse_question
+from surveys.logic import parse_survey
+from surveys.logic import parse_user
 from surveys.logic import validate
 from surveys.models import Answer
 from surveys.models import CompleteSurvey
@@ -52,23 +52,22 @@ def new_complete_survey(request):
 
 
 def view_complete_survey(request, user_id):
-    complete_surveys = parse_complete_survey(
+    complete_surveys = parse_complete_surveys(
         CompleteSurvey.objects.filter(user_id=user_id)
     )
     survey_list_obj = []
     complete_survey_question_list = []
     for complete_survey in complete_surveys:
-        survey = parse_surveys(Survey.objects.get(id=complete_survey["survey_id"]))
-        complete_survey_questions = parse_complete_survey_question(
+        survey = parse_survey(Survey.objects.get(id=complete_survey["survey_id"]))
+        complete_survey_questions = parse_complete_survey_questions(
             CompleteSurveyQuestion.objects.filter(
                 complete_survey_id=complete_survey["id"]
             )
         )
-        complete_survey_question_list = []
         for complete_survey_question in complete_survey_questions:
             complete_survey_question_list.append(
                 {
-                    "questions": parse_questions(
+                    "questions": parse_question(
                         Question.objects.get(id=complete_survey_question["question_id"])
                     ),
                     "answers": parse_answer(
@@ -76,28 +75,30 @@ def view_complete_survey(request, user_id):
                     ),
                 }
             )
-
         survey_list_obj.append(
             {
-                "complete_survey": complete_survey,
+                "complete_survey": {
+                    "completed_at": complete_survey["completed_at"],
+                    "data": complete_survey_question_list,
+                },
                 "survey": survey,
-                "questions": complete_survey_question_list,
+                # "questions": complete_survey_question_list,
             }
         )
     return render(
         request,
         "surveys/complete_survey.html",
         {
-            "survey_obj": survey_list_obj,
+            "data": survey_list_obj,
         },
     )
 
 
 def view_leaderboard(request):
     complete_survey_list = []
-    complete_surveys = parse_complete_survey(CompleteSurvey.objects.all())
+    complete_surveys = parse_complete_surveys(CompleteSurvey.objects.all())
     for complete_survey in complete_surveys:
-        user = parse_users(User.objects.get(id=complete_survey["user_id"]))
+        user = parse_user(User.objects.get(id=complete_survey["user_id"]))
         found = False
         for i in range(0, len(complete_survey_list)):
             if complete_survey_list[i]["user"] == user:
@@ -107,7 +108,5 @@ def view_leaderboard(request):
                 found = False
         if len(complete_survey_list) == 0 or not found:
             complete_survey_list.append({"user": user, "count": 1})
-    new_list = sorted(complete_survey_list, key=lambda k: k['count'], reverse=True)
-    return render(
-        request, "surveys/leaderboard.html", {"complete_surveys": new_list}
-    )
+    new_list = sorted(complete_survey_list, key=lambda k: k["count"], reverse=True)
+    return render(request, "surveys/leaderboard.html", {"complete_surveys": new_list})

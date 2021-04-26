@@ -6,7 +6,7 @@ from django.http import JsonResponse
 
 from surveys.logic import allow_only
 from surveys.logic import get_survey_area
-from surveys.logic import parse_survey_area
+from surveys.logic import parse_survey_areas
 from surveys.logic import validate
 from surveys.models import SurveyArea
 from surveys.serializers import SurveyAreaDeleteSerializer
@@ -17,7 +17,7 @@ from surveys.settings import URL_LOGIN_REDIRECT
 @allow_only("GET")
 def survey_areas_list(request):
     survey_areas = SurveyArea.objects.all()
-    return JsonResponse({"data": parse_survey_area(survey_areas)})
+    return JsonResponse({"data": parse_survey_areas(survey_areas)})
 
 
 @allow_only("POST")

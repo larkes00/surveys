@@ -1,14 +1,11 @@
 import json
 from json import JSONDecodeError
-from typing import Type
 
 from django.contrib.auth.models import User
 from django.http.response import HttpResponseBadRequest
 from django.http.response import HttpResponseNotAllowed
 
 from surveys.models import Answer
-from surveys.models import CompleteSurvey
-from surveys.models import CompleteSurveyQuestion
 from surveys.models import Question
 from surveys.models import Survey
 from surveys.models import SurveyArea
@@ -76,141 +73,108 @@ def get_user(username):
         return user
 
 
+def parse_survey(survey):
+    return {
+        "id": survey.id,
+        "author_id": survey.author_id,
+        "area_id": survey.area_id,
+        "name": survey.name,
+        "type": survey.type,
+    }
+
+
 def parse_surveys(surveys):
     response_list = []
-    try:
-        for survey in surveys:
-            response_list.append(
-                {
-                    "id": survey.id,
-                    "author_id": survey.author_id,
-                    "area_id": survey.area_id,
-                    "name": survey.name,
-                    "type": survey.type,
-                }
-            )
-    except TypeError:
-        return {
-            "id": surveys.id,
-            "author_id": surveys.author_id,
-            "area_id": surveys.area_id,
-            "name": surveys.name,
-            "type": surveys.type,
-        }
+    for survey in surveys:
+        response_list.append(parse_survey(survey))
     return response_list
+
+
+def parse_user(user):
+    return {
+        "id": user.id,
+        "username": user.username,
+    }
 
 
 def parse_users(users):
     response_list = []
-    try:
-        for user in users:
-            response_list.append(
-                {
-                    "id": user.id,
-                    "username": user.username,
-                }
-            )
-    except TypeError:
-        return {
-            "id": users.id,
-            "username": users.username,
-        }
+    for user in users:
+        response_list.append(parse_user(user))
     return response_list
+
+
+def parse_question(question):
+    return {
+        "id": question.id,
+        "content": question.content,
+        "author_id": question.author_id,
+    }
 
 
 def parse_questions(questions):
     response_list = []
-    try:
-        for question in questions:
-            response_list.append(
-                {
-                    "id": question.id,
-                    "content": question.content,
-                    "author_id": question.author_id,
-                }
-            )
-    except TypeError:
-        return {
-            "id": questions.id,
-            "content": questions.content,
-            "author_id": questions.author_id,
-        }
+    for question in questions:
+        response_list.append(parse_question(question))
     return response_list
 
 
-def parse_survey_area(survey_areas):
+def parse_survey_area(survey_area):
+    return {"id": survey_area.id, "name": survey_area.name}
+
+
+def parse_survey_areas(survey_areas):
     response_list = []
-    try:
-        for survey_area in survey_areas:
-            response_list.append(  # fmt: off
-                {"id": survey_area.id, "name": survey_area.name}
-            )  # fmt: on
-    except TypeError:
-        return {"id": survey_areas.id, "name": survey_areas.name}
+    for survey_area in survey_areas:
+        response_list.append(parse_survey_area(survey_area))
     return response_list
 
 
-def parse_answer(answers):
+def parse_answer(answer):
+    return {
+        "id": answer.id,
+        "content": answer.content,
+        "question_id": answer.question_id,
+    }
+
+
+def parse_answers(answers):
     response_list = []
-    try:
-        for answer in answers:
-            response_list.append(  # fmt: off
-                {
-                    "id": answer.id,
-                    "content": answer.content,
-                    "question_id": answer.question_id,
-                }
-            )  # fmt: on
-    except TypeError:
-        return {
-            "id": answers.id,
-            "content": answers.content,
-            "question_id": answers.question_id,
-        }
+    for answer in answers:
+        response_list.append(parse_answer(answer))
     return response_list
 
 
-def parse_complete_survey(complete_surveys):
-    response_list = []
-    try:
-        for complete_survey in complete_surveys:
-            response_list.append(
-                {
-                    "id": complete_survey.id,
-                    "survey_id": complete_survey.survey_id,
-                    "user_id": complete_survey.user_id,
-                    "completed_at": complete_survey.completed_at,
-                }
-            )
-    except CompleteSurvey.DoesNotExist:
-        return None
-    else:
-        return response_list
+def parse_complete_survey(complete_survey):
+    return {
+        "id": complete_survey.id,
+        "survey_id": complete_survey.survey_id,
+        "user_id": complete_survey.user_id,
+        "completed_at": complete_survey.completed_at,
+    }
 
 
-def parse_complete_survey_question(complete_surveys_questions):
+def parse_complete_surveys(complete_surveys):
     response_list = []
-    try:
-        for complete_survey_question in complete_surveys_questions:
-            response_list.append(
-                {
-                    "id": complete_survey_question.id,
-                    "answer_id": complete_survey_question.answer_id,
-                    "complete_survey_id": complete_survey_question.complete_survey_id,
-                    "question_id": complete_survey_question.question_id,
-                }
-            )
-    except CompleteSurveyQuestion.DoesNotExist:
-        return None
-    except TypeError:
-        return {
-            "id": complete_surveys_questions.id,
-            "answer_id": complete_surveys_questions.answer_id,
-            "complete_survey_id": complete_surveys_questions.complete_survey_id,
-            "question_id": complete_surveys_questions.question_id,
-        }
-    else:
-        return response_list
+    for complete_survey in complete_surveys:
+        response_list.append(parse_complete_survey(complete_survey))
+    return response_list
+
+
+def parse_complete_survey_question(complete_survey_question):
+    return {
+        "id": complete_survey_question.id,
+        "answer_id": complete_survey_question.answer_id,
+        "complete_survey_id": complete_survey_question.complete_survey_id,
+        "question_id": complete_survey_question.question_id,
+    }
+
+
+def parse_complete_survey_questions(complete_survey_questions):
+    response_list = []
+    for complete_survey_question in complete_survey_questions:
+        response_list.append(parse_complete_survey_question(complete_survey_question))
+    return response_list
 
 
 def allow_only(methods):
