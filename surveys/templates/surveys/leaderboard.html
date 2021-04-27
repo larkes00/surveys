@@ -3,6 +3,6 @@
 {% block content %}
     {% for complete_survey in complete_surveys %}
         <p>{{ complete_survey.user.username }}</p>
-        <p>{{ complete_survey.count }}</p>
+        <p>{{ complete_survey.total }}</p>
     {% endfor %}
 {% endblock %}

@@ -3,6 +3,7 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -95,18 +96,20 @@ def view_complete_survey(request, user_id):
 
 
 def view_leaderboard(request):
-    complete_survey_list = []
-    complete_surveys = parse_complete_surveys(CompleteSurvey.objects.all())
+    complete_surveys = (
+        CompleteSurvey.objects.all()
+        .values("user_id")
+        .annotate(total=Count("user_id"))
+        .order_by("-total")
+    )
+    response_list = []
     for complete_survey in complete_surveys:
-        user = parse_user(User.objects.get(id=complete_survey["user_id"]))
-        found = False
-        for i in range(0, len(complete_survey_list)):
-            if complete_survey_list[i]["user"] == user:
-                complete_survey_list[i]["count"] += 1
-                found = True
-            else:
-                found = False
-        if len(complete_survey_list) == 0 or not found:
-            complete_survey_list.append({"user": user, "count": 1})
-    new_list = sorted(complete_survey_list, key=lambda k: k["count"], reverse=True)
-    return render(request, "surveys/leaderboard.html", {"complete_surveys": new_list})
+        response_list.append(
+            {
+                "user": parse_user(User.objects.get(id=complete_survey["user_id"])),
+                "total": complete_survey["total"],
+            }
+        )
+    return render(
+        request, "surveys/leaderboard.html", {"complete_surveys": response_list}
+    )
