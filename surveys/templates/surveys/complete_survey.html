@@ -1,35 +1,12 @@
 {% extends 'surveys/base.html' %}
 
 {% block content %}
-<!--    {% for complete_survey in complete_surveys %}-->
-<!--        {% for survey in survey_obj %}-->
-<!--            {% if complete_survey.survey_id == survey.id %}-->
-<!--                <h1>{{ survey.name }}</h1>-->
-<!--                {{complete_survey.id}}-->
-<!--                {% for complete_survey_question in complete_survey_questions %}-->
-<!--                    {% if complete_survey_question.complete_survey_id == complete_survey.id %}-->
-<!--                        {% for question in question_obj %}-->
-<!--                            {% if complete_survey_question.question_id == question.id %}-->
-<!--                                <p>{{question.content}}</p>-->
-<!--                                {% for answer in answer_obj %}-->
-<!--                                    {% if complete_survey_question.answer_id == answer.id %}-->
-<!--                                        <p>{{ answer.content }}</p>-->
-<!--                                    {% endif %}-->
-<!--                                {% endfor %}-->
-<!--                            {% endif %}-->
-<!--                        {% endfor %}-->
-<!--                    {% endif %}-->
-<!--                {% endfor %}-->
-<!--            {% endif %}-->
-<!--        {% endfor %}-->
-<!--    {% endfor %}-->
-
-    {% for complete_survey in survey_obj %}
-        <p>{{ complete_survey.survey.name }}</p>
+    {% for complete_survey in data %}
+        <h3>Survey name: {{ complete_survey.survey.name }}</h3>
         <p>{{ complete_survey.complete_survey.completed_at }}</p>
-        {% for questions in complete_survey.questions %}
-            <p>{{ questions.name }}</p>
-            <p>{{ questions.answer.name }}</p>
+        {% for complete_survey_data in complete_survey.complete_survey.data %}
+            <h6>Question: {{ complete_survey_data.questions.content }}</h6>
+            <p>Answer: {{ complete_survey_data.answers.content }}</p>
         {% endfor %}
     {% endfor %}
 {% endblock %}

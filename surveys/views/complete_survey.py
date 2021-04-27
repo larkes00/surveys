@@ -57,8 +57,8 @@ def view_complete_survey(request, user_id):
         CompleteSurvey.objects.filter(user_id=user_id)
     )
     survey_list_obj = []
-    complete_survey_question_list = []
     for complete_survey in complete_surveys:
+        complete_survey_question_list = []
         survey = parse_survey(Survey.objects.get(id=complete_survey["survey_id"]))
         complete_survey_questions = parse_complete_survey_questions(
             CompleteSurveyQuestion.objects.filter(
@@ -78,12 +78,11 @@ def view_complete_survey(request, user_id):
             )
         survey_list_obj.append(
             {
+                "survey": survey,
                 "complete_survey": {
                     "completed_at": complete_survey["completed_at"],
                     "data": complete_survey_question_list,
                 },
-                "survey": survey,
-                # "questions": complete_survey_question_list,
             }
         )
     return render(
