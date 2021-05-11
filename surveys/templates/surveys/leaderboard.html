@@ -1,8 +1,19 @@
 {% extends 'surveys/base.html' %}
 
 {% block content %}
-    {% for complete_survey in complete_surveys %}
-        <p>{{ complete_survey.user.username }}</p>
-        <p>{{ complete_survey.total }}</p>
-    {% endfor %}
+    <script defer>
+        function onClick() {
+            var comment = document.getElementsByClassName("leadboard");
+            var element = document.createElement('div');
+            var text = document.createTextNode('some text');
+            element.appendChild(text)
+        }
+    </script>
+    <div class="leadboard">
+        {% for complete_survey in complete_surveys %}
+            <p class="username">{{ complete_survey.username }}</p>
+            <p class="total">{{ complete_survey.total }}</p>
+        {% endfor %}
+    </div>
+    <p><button name=foo" value="foo" onclick="onClick()">Submit</button></p>
 {% endblock %}
