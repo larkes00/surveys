@@ -55,7 +55,7 @@ def complete_survey_sql(user_id):
     cursor = connection.cursor()
     cursor.execute(
         f"""
-        SELECT survey.name, auth_user.username, compl_survey.completed_at, answer.content as answer, question.content as question
+        SELECT survey.id, survey.name, auth_user.username, compl_survey.completed_at, answer.content as answer, question.content as question
             FROM surveys_completesurvey as compl_survey
             JOIN surveys_survey survey on compl_survey.survey_id = survey.id
             JOIN surveys_completesurveyquestion compl_survey_question on compl_survey.id = compl_survey_question.complete_survey_id
@@ -70,9 +70,20 @@ def complete_survey_sql(user_id):
 
 
 def view_complete_survey(request, user_id):
-    complete_survey = complete_survey_sql(user_id=user_id)
+    complete_surveys = complete_survey_sql(user_id=user_id)
+    result = {}
+    for complete_survey in complete_surveys:
+        if complete_survey["id"] in result:
+            result[complete_survey["id"]]["data"].append(complete_survey)
+        else:
+            result[complete_survey["id"]] = {
+                "name": complete_survey["name"],
+                "data": [complete_survey],
+            }
+
+
     # complete_surveys = parse_complete_surveys(
-    #     CompleteSurvey.objects.filter(user_id=user_id)
+    #     CompleteSurvey.objeresult = {dict: 2} {2: {'name': 'The level of education', 'data': {'id': 2, 'name': 'The level of education', 'username': 'admin', 'completed_at': datetime.datetime(2021, 4, 21, 16, 12, 53, 860540, tzinfo=<UTC>), 'answer': 'Yes', 'question': 'Do you have a university degree'… Viewcts.filter(user_id=user_id)
     # )
     # survey_list_obj = []
     # for complete_survey in complete_surveys:
@@ -110,7 +121,7 @@ def view_complete_survey(request, user_id):
     #         "data": survey_list_obj,
     #     },
     # )
-    return render(request, "surveys/complete_survey.html", {"data": complete_survey})
+    return render(request, "surveys/complete_survey.html", {"data": result})
 
 
 def dictfetchall(cursor):
@@ -151,6 +162,7 @@ def view_leaderboard(request):
     return render(request, "surveys/leaderboard.html", {"complete_surveys": rows})
 
 
+@allow_only("GET")
 def leaderboard(request):
     rows = leaderboard_sql()
     return JsonResponse({"data": rows})

@@ -3,11 +3,27 @@
 {% block content %}
     <script defer>
         function onClick() {
-            var comment = document.getElementsByClassName("leadboard");
-            var element = document.createElement('div');
-            var text = document.createTextNode('some text');
-            element.appendChild(text)
+            // var comment = document.getElementsByClassName("leadboard")[0];
+            // var text = document.createTextNode("text");
+            // comment.appendChild(text)
+            let response = fetch(
+                'http://localhost:8000/leaderboard/',
+                    {
+                        method: 'GET',
+                        headers: new Headers(),
+                    }
+                ).then((res) => {
+                    return res.json();
+            }).then((data) => {
+                var comment = document.getElementsByClassName("leadboard")[0];
+                response_data = data["data"];
+                for (var i = 0; i < response_data.length; i++) {
+                    var text = document.createTextNode(response_data[i].username + "" + response_data[i].total + "";);
+                    comment.appendChild(text)
+                }
+            });
         }
+
     </script>
     <div class="leadboard">
         {% for complete_survey in complete_surveys %}
