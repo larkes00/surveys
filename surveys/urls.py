@@ -32,6 +32,7 @@ urlpatterns = [
     path("view/login/", views.view_login, name="view_login"),
     path("view/signup/", views.view_signup, name="view_signup"),
     path("surveys/<int:survey_id>/", views.survey, name="survey"),
+    path("surveyquestion/create/", views.new_survey_question, name="survey_question"),
     path("users/", views.user_list, name="users"),
     path("surveyareas/", views.survey_areas_list, name="survey_areas"),
     path("questions/", views.question_list, name="questions"),

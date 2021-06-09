@@ -109,6 +109,7 @@ def parse_question(question):
         "id": question.id,
         "content": question.content,
         "author_id": question.author_id,
+        "correct_answer_id": question.correct_answer_id
     }
 
 
