@@ -3,10 +3,7 @@
 {% block content %}
     <script defer>
         function onClick() {
-            // var comment = document.getElementsByClassName("leadboard")[0];
-            // var text = document.createTextNode("text");
-            // comment.appendChild(text)
-            let response = fetch(
+            fetch(
                 'http://localhost:8000/leaderboard/',
                     {
                         method: 'GET',
@@ -15,21 +12,37 @@
                 ).then((res) => {
                     return res.json();
             }).then((data) => {
-                var comment = document.getElementsByClassName("leadboard")[0];
+                var b = document.getElementById("new-div");
+                var comment = document.getElementsByClassName("lead-board")[0];
+                console.log(comment);
+                if (b) {
+                    comment.removeChild(b);
+                }
+                var div = document.createElement("div");
+                div.setAttribute("id", "new-div");
+                var table = document.createElement("table");
+                div.appendChild(table);
                 response_data = data["data"];
                 for (var i = 0; i < response_data.length; i++) {
-                    var text = document.createTextNode(response_data[i].username + "" + response_data[i].total + "";);
-                    comment.appendChild(text)
+                    var tr = document.createElement("tr");
+                    table.appendChild(tr);
+                    var td1 = document.createElement("td");
+                    tr.appendChild(td1);
+                    var td2 = document.createElement("td");
+                    tr.appendChild(td2);
+                    var text1 = document.createTextNode(response_data[i].username);
+                    var text2 = document.createTextNode(response_data[i].total);
+                    td1.appendChild(text1);
+                    td2.appendChild(text2);
+                    comment.appendChild(div);
                 }
             });
         }
 
     </script>
-    <div class="leadboard">
-        {% for complete_survey in complete_surveys %}
-            <p class="username">{{ complete_survey.username }}</p>
-            <p class="total">{{ complete_survey.total }}</p>
-        {% endfor %}
+<div class="lead-board">
+    <div id="new-div">
     </div>
+</div>
     <p><button name=foo" value="foo" onclick="onClick()">Submit</button></p>
 {% endblock %}
