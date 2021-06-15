@@ -2,17 +2,17 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.http.response import HttpResponse
+from django.http.response import HttpResponseBadRequest
 from django.http.response import HttpResponseForbidden
 from django.http.response import HttpResponseNotFound
-from django.http.response import HttpResponseBadRequest
-from django.http.response import HttpResponse
 
 from surveys.logic import allow_only
 from surveys.logic import get_question
 from surveys.logic import get_survey_question
+from surveys.logic import parse_question
 from surveys.logic import parse_questions
 from surveys.logic import parse_survey
-from surveys.logic import parse_question
 from surveys.logic import validate
 from surveys.models import Question
 from surveys.models import Survey
@@ -35,11 +35,11 @@ def question_list(request):
 def new_question(request):
     body = json.loads(request.body)
     if "correct_answer_id" in body:
-        question = Question(content=body["content"], correct_answer_id=body["correct_answer_id"])
-    else:
         question = Question(
-            content=body["content"]
+            content=body["content"], correct_answer_id=body["correct_answer_id"]
         )
+    else:
+        question = Question(content=body["content"])
     question.save()
     return JsonResponse({"data": body})
 
@@ -57,10 +57,7 @@ def new_survey_question(request):
     if survey["type"] == "Test" and question["correct_answer_id"] is None:
         return HttpResponseBadRequest("Question without correct_answer")
 
-    survey_question = SurveyQuestion(
-        question_id=question["id"],
-        survey_id=survey["id"]
-    )
+    survey_question = SurveyQuestion(question_id=question["id"], survey_id=survey["id"])
     survey_question.save()
     return JsonResponse({"data": survey_question})
 
