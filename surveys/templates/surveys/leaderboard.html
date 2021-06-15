@@ -13,10 +13,10 @@
                     return res.json();
             }).then((data) => {
                 var b = document.getElementById("new-div");
-                var comment = document.getElementsByClassName("lead-board")[0];
-                console.log(comment);
+                var div_leader_board = document.getElementsByClassName("lead-board")[0];
+                console.log(div_leader_board);
                 if (b) {
-                    comment.removeChild(b);
+                    div_leader_board.removeChild(b);
                 }
                 var div = document.createElement("div");
                 div.setAttribute("id", "new-div");
@@ -34,7 +34,7 @@
                     var text2 = document.createTextNode(response_data[i].total);
                     td1.appendChild(text1);
                     td2.appendChild(text2);
-                    comment.appendChild(div);
+                    div_leader_board.appendChild(div);
                 }
             });
         }
