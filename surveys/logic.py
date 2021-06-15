@@ -12,6 +12,12 @@ from surveys.models import SurveyArea
 from surveys.models import SurveyQuestion
 
 
+def dictfetchall(cursor):
+    """Returns all rows from a cursor as a dict"""
+    desc = cursor.description
+    return [dict(zip([col[0] for col in desc], row)) for row in cursor.fetchall()]
+
+
 def get_survey(survey_id):
     try:
         survey = Survey.objects.get(id=survey_id)
@@ -109,7 +115,7 @@ def parse_question(question):
         "id": question.id,
         "content": question.content,
         "author_id": question.author_id,
-        "correct_answer_id": question.correct_answer_id
+        "correct_answer_id": question.correct_answer_id,
     }
 
 

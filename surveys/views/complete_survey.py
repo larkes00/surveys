@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from surveys.logic import allow_only
+from surveys.logic import dictfetchall
 from surveys.logic import parse_answer
 from surveys.logic import parse_complete_survey_questions
 from surveys.logic import parse_complete_surveys
@@ -81,7 +82,6 @@ def view_complete_survey(request, user_id):
                 "data": [complete_survey],
             }
 
-
     # complete_surveys = parse_complete_surveys(
     #     CompleteSurvey.objeresult = {dict: 2} {2: {'name': 'The level of education', 'data': {'id': 2, 'name': 'The level of education', 'username': 'admin', 'completed_at': datetime.datetime(2021, 4, 21, 16, 12, 53, 860540, tzinfo=<UTC>), 'answer': 'Yes', 'question': 'Do you have a university degree'… Viewcts.filter(user_id=user_id)
     # )
@@ -122,12 +122,6 @@ def view_complete_survey(request, user_id):
     #     },
     # )
     return render(request, "surveys/complete_survey.html", {"data": result})
-
-
-def dictfetchall(cursor):
-    """Returns all rows from a cursor as a dict"""
-    desc = cursor.description
-    return [dict(zip([col[0] for col in desc], row)) for row in cursor.fetchall()]
 
 
 def leaderboard_sql():
