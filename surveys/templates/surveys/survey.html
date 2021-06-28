@@ -2,6 +2,38 @@
 
 {% block content %}
 <script>
+    function getAllSiblings(element, parent) {
+        const children = [...parent.children];
+        return children.filter(child => child !== element);
+    }
+
+    function isChecked(element) {
+        var siblings = getAllSiblings(element.parentElement, element.parentElement.parentElement);
+        for (i = 0; i < siblings.length; i++) {
+            if (element.checked) {
+                var input = document.querySelector("[id='" + siblings[i].getAttribute("id") + "'] > input");
+                try {
+                    if (input.checked) {
+                        input.checked = false;
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+        }
+
+    }
+
+    function addTextToDiv(text) {
+        var serverAnswer = document.getElementsByClassName("server_answer")[0];
+        console.log(serverAnswer)
+        var paragraph = document.createElement("p");
+        var p = document.createTextNode("Server error: " + text);
+        paragraph.appendChild(p)
+        console.log(serverAnswer.appendChild);
+        serverAnswer.appendChild(paragraph);
+    }
+
     function onClick() {
         var questionDiv = document.getElementsByClassName('question')
         let list = []
@@ -9,54 +41,61 @@
         for (var i = 0; i < questionDiv.length; i++) {
             answerDiv = questionDiv[i].getElementsByClassName('answer')
             var checked = false;
-            for (var j = 0; j < answerDiv.length; j++){
+            for (var j = 0; j < answerDiv.length; j++) {
                 inputCheckbox = answerDiv[j].getElementsByTagName('input')
                 for (var k = 0; k < inputCheckbox.length; k++) {
                     if (inputCheckbox[k].checked) {
-                        list.push({question_id: questionDiv[i].id , answer_id: answerDiv[j].id})
+                        list.push({question_id: questionDiv[i].id, answer_id: answerDiv[j].id})
                         checked = true;
                         break;
                     }
                 }
             }
-            if (checked == false) {
-                    alert("You are not answer for all questions")
-                    answer_checked = false;
-                    break;
+            if (checked === false) {
+                addTextToDiv("You are not answer for all questions");
+                answer_checked = false;
+                break;
             }
             answer_checked = true;
         }
-        if (answer_checked == true) {
+        if (answer_checked === true) {
             fetch(
                 'http://localhost:8000/complete_survey/create/',
-                    {
-                        method: 'POST',
-                        headers: new Headers(),
-                        body: JSON.stringify({questions: list, survey_id: '{{ survey.id }}', user_id: '{{ user.id }}'})
-                    }
-                ).then((res) => {
-                    return res.text();
-                }).then((data) =>{
-                    alert("Server error:" + data)
-                })
+                {
+                    method: 'POST',
+                    headers: new Headers(),
+                    body: JSON.stringify({questions: list, survey_id: '{{ survey.id }}', user_id: '{{ user.id }}'})
+                }
+            ).then((res) => {
+                if (res.ok) {
+                    return null
+                }
+                return res.text();
+            }).then((data) => {
+                if (data != null) {
+                    addTextToDiv(data);
+                }
+            })
         }
-        
+
     }
 </script>
-    {% for question in questions %}
-        <div class="question" id="{{ question.id }}">
-        <p>{{ question.content }}</p>
-            {% for answer in answers %}
-                {% if answer.question_id == question.id %}
-                <div class="answer" id="{{ answer.id }}">
-                    <input type="checkbox">
-                    {{ answer.content }}
-                    <p></p>
-                </div>
-            {% endif %}
-        {% endfor %}
-        </div>
+{% for question in questions %}
+<div class="question" id="{{ question.id }}">
+    <p>{{ question.content }}</p>
+    {% for answer in answers %}
+    {% if answer.question_id == question.id %}
+    <div class="answer" id="{{ answer.id }}">
+        <input id="A{{ answer.id }}Q{{ question.id }}" type="checkbox" onclick="isChecked(this)">{{ answer.content }}
+        <br>
+    </div>
+    {% endif %}
     {% endfor %}
-    <p><button name="foo" value="foo" onclick="onClick()">Submit</button></p>
+</div>
+{% endfor %}
+<p>
+    <button name="foo" value="foo" onclick="onClick()">Submit</button>
+</p>
+<div class="server_answer"></div>
 {% endblock %}
 
