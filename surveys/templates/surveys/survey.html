@@ -11,13 +11,11 @@
         var siblings = getAllSiblings(element.parentElement, element.parentElement.parentElement);
         for (i = 0; i < siblings.length; i++) {
             if (element.checked) {
-                var input = document.querySelector("[id='" + siblings[i].getAttribute("id") + "'] > input");
-                try {
+                if (siblings[i].tagName === "DIV") {
+                    var input = document.querySelector("[id='" + siblings[i].getAttribute("id") + "'] > input");
                     if (input.checked) {
                         input.checked = false;
                     }
-                } catch (e) {
-                    continue;
                 }
             }
         }
@@ -91,6 +89,7 @@
     </div>
     {% endif %}
     {% endfor %}
+    <br>
 </div>
 {% endfor %}
 <p>
