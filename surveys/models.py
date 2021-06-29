@@ -75,3 +75,10 @@ class SurveyQuestion(models.Model):
 
     def __str__(self):
         return f"Опрос: {self.survey.name} | Вопрос: {self.question.content}"
+
+
+class QuestionAnswer(models.Model):
+    id = models.AutoField(primary_key=True)
+    question = models.ForeignKey("Question", on_delete=models.CASCADE)
+    answer = models.ForeignKey("Answer", on_delete=models.CASCADE)
+    is_correct = models.BooleanField(null=True)
