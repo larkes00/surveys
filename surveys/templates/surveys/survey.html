@@ -1,6 +1,14 @@
 {% extends 'surveys/base.html' %}
 
 {% block content %}
+<style>
+    .answer {
+        font-size: 1.2em;
+    }
+    input {
+        margin: 5px;
+    }
+</style>
 <script>
     function getAllSiblings(element, parent) {
         const children = [...parent.children];
@@ -9,17 +17,18 @@
 
     function isChecked(element) {
         var siblings = getAllSiblings(element.parentElement, element.parentElement.parentElement);
-        for (i = 0; i < siblings.length; i++) {
-            if (element.checked) {
-                if (siblings[i].tagName === "DIV") {
-                    var input = document.querySelector("[id='" + siblings[i].getAttribute("id") + "'] > input");
-                    if (input.checked) {
-                        input.checked = false;
+        if ('{{survey.type}}' === "Formal") {
+            for (i = 0; i < siblings.length; i++) {
+                if (element.checked) {
+                    if (siblings[i].tagName === "DIV") {
+                        var input = document.querySelector("[id='" + siblings[i].getAttribute("id") + "'] > input");
+                        if (input.checked) {
+                            input.checked = false;
+                        }
                     }
                 }
             }
         }
-
     }
 
     function addTextToDiv(text) {
@@ -62,32 +71,34 @@
                 {
                     method: 'POST',
                     headers: new Headers(),
-                    body: JSON.stringify({questions: list, survey_id: '{{ survey.id }}', user_id: '{{ user.id }}'})
+                    body: JSON.stringify({
+                        questions: list,
+                        survey_id: '{{ survey.id }}',
+                        user_id: '{{ request.user.id }}'
+                    })
                 }
             ).then((res) => {
                 if (res.ok) {
                     return null
-                }
-                return res.text();
-            }).then((data) => {
-                if (data != null) {
-                    addTextToDiv(data);
+                } else {
+                    addTextToDiv(res.text());
                 }
             })
         }
 
     }
 </script>
-{% for question in questions %}
-<div class="question" id="{{ question.id }}">
-    <p>{{ question.content }}</p>
-    {% for answer in answers %}
-    {% if answer.question_id == question.id %}
-    <div class="answer" id="{{ answer.id }}">
-        <input id="A{{ answer.id }}Q{{ question.id }}" type="checkbox" onclick="isChecked(this)">{{ answer.content }}
+<h3>{{ survey.name }}</h3>
+{% for question_answer in question_answers %}
+{% for element in question_answer %}
+    {% if forloop.first %}
+        <div class="question" id="{{ element.question.id }}">
+        <h4>{{ element.question.content }}</h4>
+    {% endif %}
+    <div class="answer" id="{{ element.answer.id }}">
+        <input id="A{{ element.answer.id }}Q{{ element.question.id }}" type="checkbox" onclick="isChecked(this)">{{ element.answer.content }}
         <br>
     </div>
-    {% endif %}
     {% endfor %}
     <br>
 </div>
