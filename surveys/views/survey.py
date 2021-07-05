@@ -9,11 +9,10 @@ from django.shortcuts import render
 from surveys.logic import allow_only
 from surveys.logic import get_survey
 from surveys.logic import parse_survey
-from surveys.logic import parse_user
 from surveys.logic import validate
-from surveys.models import Answer
 from surveys.models import Survey
 from surveys.models import SurveyQuestion
+from surveys.models import QuestionAnswer
 from surveys.serializers import SurveyDeleteSerializer
 from surveys.serializers import SurveySerializer
 from surveys.settings import URL_LOGIN_REDIRECT
@@ -31,22 +30,15 @@ def view_survey(request, survey_id):
     survey_obj = get_survey(survey_id)
     if survey_obj is None:
         return HttpResponseNotFound("No such survey")
-    questions = []
-    answers = []
+    question_answers = []
     for survey_question in SurveyQuestion.objects.filter(survey_id=survey_id):
-        questions.append(survey_question.question)
-    for answer in Answer.objects.all():
-        answers.append(answer)
-    user = parse_user(request.user)
+        question_answers.append(
+            QuestionAnswer.objects.filter(question_id=survey_question.question_id)
+        )
     return render(
         request,
         "surveys/survey.html",
-        {
-            "survey": survey_obj,
-            "questions": questions,
-            "answers": answers,
-            "user": user,
-        },
+        {"question_answers": question_answers, "survey": survey_obj},
     )
 
 
