@@ -22,7 +22,7 @@ from surveys.settings import URL_LOGIN_REDIRECT
 @validate(AnswerSerializer)
 def new_answer(request):
     body = json.loads(request.body)
-    answer = Answer(content=body["content"], question_id=body["question_id"])
+    answer = Answer(content=body["content"])
     answer.save()
     return JsonResponse({"data": body})
 
