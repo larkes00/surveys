@@ -57,4 +57,5 @@ urlpatterns = [
     ),
     path("view/leaderboard/", views.view_leaderboard, name="view_leaderboard"),
     path("leaderboard/", views.leaderboard, name="leaderboard"),
+    path("question/answer/create/", views.new_question_answer, name="question_answer"),
 ]

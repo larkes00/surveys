@@ -13,7 +13,8 @@ from surveys.logic import get_survey_question
 from surveys.logic import parse_questions
 from surveys.logic import parse_survey
 from surveys.logic import validate
-from surveys.models import Question, QuestionAnswer
+from surveys.models import Question
+from surveys.models import QuestionAnswer
 from surveys.models import Survey
 from surveys.models import SurveyQuestion
 from surveys.serializers import QuestionDeleteSerializer
@@ -52,7 +53,9 @@ def new_survey_question(request):
 
     if survey["type"] == "Test" and not any(is_correct):
         return HttpResponseBadRequest("Question without correct_answer")
-    survey_question = SurveyQuestion(question_id=question_answers[0].question_id, survey_id=survey["id"])
+    survey_question = SurveyQuestion(
+        question_id=question_answers[0].question_id, survey_id=survey["id"]
+    )
     survey_question.save()
     return HttpResponse("Successful")
 
@@ -74,3 +77,14 @@ def del_question(request):
         question.delete()
         return JsonResponse({"data": question.id})
     return HttpResponseForbidden("You are not the owner of the question")
+
+
+@allow_only("POST")
+@login_required(login_url=URL_LOGIN_REDIRECT)
+def new_question_answer(request):
+    body = json.loads(request)
+    QuestionAnswer.objects.create(
+        question_id=body["question_id"],
+        answer_id=body["answer_id"],
+        is_correct=body["is_correct"],
+    )

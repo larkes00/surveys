@@ -10,9 +10,9 @@ from surveys.logic import allow_only
 from surveys.logic import get_survey
 from surveys.logic import parse_survey
 from surveys.logic import validate
+from surveys.models import QuestionAnswer
 from surveys.models import Survey
 from surveys.models import SurveyQuestion
-from surveys.models import QuestionAnswer
 from surveys.serializers import SurveyDeleteSerializer
 from surveys.serializers import SurveySerializer
 from surveys.settings import URL_LOGIN_REDIRECT
