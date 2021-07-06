@@ -29,10 +29,10 @@ def test_complete_survey_successful(client):
     create_user(login="TestUser")
     create_survey_area(name="TestSurveyArea")
     create_survey(name="TestSurvey", author_id=1, area_id=1)
-    create_answer(content="TestAnswer1", question_id=1, id=1)
-    create_question(content="TestQuestion1", correct_answer_id=1, author_id=1, id=1)
-    create_answer(content="TestAnswer2", question_id=2, id=2)
-    create_question(content="TestQuestion2", correct_answer_id=2, author_id=1, id=2)
+    create_answer(content="TestAnswer1", id=1)
+    create_question(content="TestQuestion1", author_id=1, id=1)
+    create_answer(content="TestAnswer2", id=2)
+    create_question(content="TestQuestion2", author_id=1, id=2)
     client.login(username="TestUser", password="12345678")
     test_data = {
         "questions": [

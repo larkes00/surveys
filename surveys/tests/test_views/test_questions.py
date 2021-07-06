@@ -41,7 +41,7 @@ def test_questions_list(client):
 def test_question_create(client):
     create_user(login="TestUser")
     client.login(username="TestUser", password="12345678")
-    create_answer(content="Nothing", question_id=1)
+    create_answer(content="Nothing")
     respone = client.post(
         question_create_url(),
         {"content": "TestQuestion2", "correct_answer_id": 1},
@@ -78,9 +78,9 @@ def test_delete_question_not_exist(client):
 def test_delete_question_used(client):
     create_user(login="TestUser")
     client.login(username="TestUser", password="12345678")
-    create_answer(content="TestAnswer", question_id=1)
+    create_answer(content="TestAnswer")
     question = create_question(  # fmt: off
-        content="TestQuestion?", author_id=1, correct_answer_id=1
+        content="TestQuestion?", author_id=1
     )  # fmt: on
     create_survey_area(name="Anything")
     create_survey(name="Survey", author_id=1, area_id=1)
@@ -105,9 +105,9 @@ def test_delete_question_used(client):
 def test_delete_question_is_author(client):
     create_user(login="TestUser")
     client.login(username="TestUser", password="12345678")
-    create_answer(content="Fine", question_id=1)
+    create_answer(content="Fine")
     question = create_question(  # fmt: off
-        content="How are you?", author_id=1, correct_answer_id=1
+        content="How are you?", author_id=1
     )  # fmt: on
     respone = client.post(
         question_delete_url(),
@@ -126,9 +126,9 @@ def test_delete_question_not_author(client):
     create_user(id=1, login="TestUser1")
     create_user(id=2, login="TestUser2")
     client.login(username="TestUser1", password="12345678")
-    create_answer(content="Fine", question_id=1)
+    create_answer(content="Fine")
     question = create_question(  # fmt: off
-        content="How are you?", author_id=2, correct_answer_id=1
+        content="How are you?", author_id=2
     )  # fmt: on
     respone = client.post(
         question_delete_url(),

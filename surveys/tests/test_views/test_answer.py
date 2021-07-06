@@ -35,7 +35,7 @@ def test_delete_answer_only_post(client):
 def test_answer_create(client):
     create_user(login="TestUser")
     client.login(username="TestUser", password="12345678")
-    create_question(content="How are you?", author_id=1, correct_answer_id=1)
+    create_question(content="How are you?", author_id=1)
     response = client.post(
         get_answer_create_url(),
         {"content": "Bad", "question_id": 1},
@@ -43,7 +43,7 @@ def test_answer_create(client):
     )
     assert response.status_code == 200
     answer = parse_answer(get_answer(answer_id=1))
-    assert answer == {"id": 1, "content": "Bad", "question_id": 1}
+    assert answer == {"id": 1, "content": "Bad"}
 
 
 @pytest.mark.django_db
@@ -62,8 +62,8 @@ def test_del_answer_not_exists(client):
 def test_del_answer_not_successful(client):
     create_user(login="TestUser")
     client.login(username="TestUser", password="12345678")
-    create_question(content="TestQuestion", author_id=1, correct_answer_id=1)
-    create_answer(content="TestAnswer", question_id=1)
+    create_question(content="TestQuestion", author_id=1)
+    create_answer(content="TestAnswer")
     create_survey_area(name="TestSurveyArea")
     create_survey_question(question_id=1, survey_id=1)
     create_survey(name="TestSurvey", author_id=1, area_id=1)
@@ -79,8 +79,8 @@ def test_del_answer_not_successful(client):
 def test_del_answer_successful(client):
     create_user(login="TestUser")
     client.login(username="TestUser", password="12345678")
-    create_question(content="TestQuestion", author_id=1, correct_answer_id=1)
-    create_answer(content="TestAnswer", question_id=1)
+    create_question(content="TestQuestion", author_id=1)
+    create_answer(content="TestAnswer")
     create_survey_area(name="TestSurveyArea")
     create_survey(name="TestSurvey", author_id=1, area_id=1)
     response = client.post(

@@ -16,12 +16,11 @@ def create_user(login: str, password: str = "12345678", id: int = 1):
     return user
 
 
-def create_question(content: str, correct_answer_id: int, author_id: int, id: int = 1):
+def create_question(content: str, author_id: int, id: int = 1):
     # fmt: off
     question = Question(
         id=id,
         content=content,
-        correct_answer_id=correct_answer_id,
         author_id=author_id
     )
     # fmt: on
@@ -29,8 +28,8 @@ def create_question(content: str, correct_answer_id: int, author_id: int, id: in
     return question
 
 
-def create_answer(content: str, question_id: int, id: int = 1):
-    answer = Answer(id=id, content=content, question_id=question_id)
+def create_answer(content: str, id: int = 1):
+    answer = Answer(id=id, content=content)
     answer.save()
     return answer
 
@@ -46,6 +45,8 @@ def create_survey(name: str, author_id: int, area_id: int, type_survey: str = "F
     survey = Survey(id=id, name=name, author_id=author_id, area_id=area_id, type=type_survey)  # noqa: E501
     survey.save()
     return survey
+
+
 # fmt: on
 
 
