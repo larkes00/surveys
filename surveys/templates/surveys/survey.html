@@ -17,7 +17,7 @@
 
     function isChecked(element) {
         var siblings = getAllSiblings(element.parentElement, element.parentElement.parentElement);
-        if ('{{survey.type}}' === "Formal") {
+        if (element.getAttribute('survey_type') === "Formal") {
             for (i = 0; i < siblings.length; i++) {
                 if (element.checked) {
                     if (siblings[i].tagName === "DIV") {
@@ -96,7 +96,7 @@
         <h4>{{ element.question.content }}</h4>
     {% endif %}
     <div class="answer" id="{{ element.answer.id }}">
-        <input id="A{{ element.answer.id }}Q{{ element.question.id }}" type="checkbox" onclick="isChecked(this)">{{ element.answer.content }}
+        <input id="A{{ element.answer.id }}Q{{ element.question.id }}" survey_type="{{ survey.type }}" type="checkbox" onclick="isChecked(this)">{{ element.answer.content }}
         <br>
     </div>
     {% endfor %}

@@ -45,13 +45,15 @@ def new_survey_question(request):
     body = json.loads(request.body)
     survey = parse_survey(Survey.objects.get(id=body["survey_id"]))
     question_answers = QuestionAnswer.objects.filter(question_id=body["question_id"])
-    is_correct = []
+    is_correct = False
     for question_answer in question_answers:
-        is_correct.append(question_answer.is_correct)
-    if survey["type"] == "Formal" and any(is_correct):
+        if question_answer.is_correct:
+            is_correct = True
+            break
+    if survey["type"] == "Formal" and is_correct:
         return HttpResponseBadRequest("Formal survey didn't have correct answer")
 
-    if survey["type"] == "Test" and not any(is_correct):
+    if survey["type"] == "Test" and not is_correct:
         return HttpResponseBadRequest("Question without correct_answer")
     survey_question = SurveyQuestion(
         question_id=question_answers[0].question_id, survey_id=survey["id"]
