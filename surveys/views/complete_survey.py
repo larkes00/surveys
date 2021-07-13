@@ -1,3 +1,4 @@
+from collections import defaultdict
 import datetime
 import json
 
@@ -64,7 +65,7 @@ def complete_survey_sql(user_id):
             JOIN surveys_answer answer on compl_survey_question.answer_id = answer.id
             JOIN auth_user on compl_survey.user_id = auth_user.id
             WHERE compl_survey.user_id = {user_id}
-            ORDER BY compl_survey.completed_at;
+            ORDER BY compl_survey.completed_at DESC;
         """
     )
     return dictfetchall(cursor)
@@ -74,12 +75,30 @@ def view_complete_survey(request, user_id):
     complete_surveys = complete_survey_sql(user_id=user_id)
     result = {}
     for complete_survey in complete_surveys:
-        if complete_survey["id"] in result:
-            result[complete_survey["id"]]["data"].append(complete_survey)
+        if str(complete_survey["completed_at"]) in result:
+            question_exists = False
+            for element in result[str(complete_survey["completed_at"])]["data"]:
+                if complete_survey["question"] in element["question"]:
+                    element["answer"].append(complete_survey["answer"])
+                    question_exists = True
+                    break
+            if not question_exists:
+                result[str(complete_survey["completed_at"])]["data"].append(
+                    {
+                        "question": complete_survey["question"],
+                        "answer": [complete_survey["answer"]],
+                    }
+                )
         else:
-            result[complete_survey["id"]] = {
+            result[str(complete_survey["completed_at"])] = {
                 "name": complete_survey["name"],
-                "data": [complete_survey],
+                "completed_at": complete_survey["completed_at"],
+                "data": [
+                    {
+                        "question": complete_survey["question"],
+                        "answer": [complete_survey["answer"]],
+                    }
+                ],
             }
 
     # complete_surveys = parse_complete_surveys(
@@ -121,7 +140,7 @@ def view_complete_survey(request, user_id):
     #         "data": survey_list_obj,
     #     },
     # )
-    return render(request, "surveys/complete_survey.html", {"data": result})
+    return render(request, "surveys/complete_survey.html", {"result": result})
 
 
 def leaderboard_sql():
@@ -160,3 +179,52 @@ def view_leaderboard(request):
 def leaderboard(request):
     rows = leaderboard_sql()
     return JsonResponse({"data": rows})
+
+
+# def leaderboard_correct_answers(request):
+#     cursor = connection.cursor()
+#     cursor.execute(
+#         f"""
+#         SELECT complete_survey.survey_id, complete_survey.completed_at, (SELECT COUNT(question_answer.answer_id) ) as count_correct_answer
+#         FROM surveys_completesurvey as complete_survey
+#         JOIN surveys_survey as survey ON survey.id = complete_survey.survey_id
+#         JOIN surveys_completesurveyquestion as complete_survey_question ON complete_survey_question.complete_survey_id = complete_survey.id
+#         JOIN surveys_questionanswer as question_answer ON question_answer.answer_id = complete_survey_question.answer_id
+#         WHERE complete_survey.user_id = {request.user.id} and question_answer.is_correct = True and survey.type = 'Test'
+#         GROUP BY complete_survey.completed_at, complete_survey.survey_id
+#         ORDER BY complete_survey.completed_at DESC;
+#         """
+#     )
+#     correct_answers = dictfetchall(cursor)
+#     cursor.execute(
+#         f"""
+#         SELECT complete_survey.survey_id, complete_survey.completed_at, COUNT(complete_survey_question.answer_id) as count_user_answer
+#         FROM surveys_completesurvey as complete_survey
+#         JOIN surveys_survey as survey ON survey.id = complete_survey.survey_id
+#         JOIN surveys_completesurveyquestion as complete_survey_question ON complete_survey_question.complete_survey_id = complete_survey.id
+#         WHERE complete_survey.user_id = {request.user.id} and survey.type = 'Test'
+#         GROUP BY complete_survey.completed_at, complete_survey.survey_id
+#         ORDER BY complete_survey.completed_at DESC;
+#         """
+#     )
+#     user_answers = dictfetchall(cursor)
+#     d = defaultdict(dict)
+#     for l in (user_answers, correct_answers):
+#         for elem in l:
+#             d[elem['completed_at']].update(elem)
+#     for i in d.values():
+#         print(i)
+#
+#     cursor.execute(
+#         """
+#         SELECT survey.id as survey_id, COUNT(question_answer.answer_id)
+#         FROM surveys_survey as survey
+#         JOIN surveys_surveyquestion as survey_question ON survey_question.survey_id = survey.id
+#         JOIN surveys_questionanswer as question_answer ON question_answer.question_id = survey_question.question_id
+#         WHERE survey.type = 'Test' and question_answer.is_correct = TRUE
+#         GROUP BY survey.id;
+#         """
+#     )
+#     count_right_answers = dictfetchall(cursor)
+#     print(count_right_answers)
+#     return JsonResponse({"": ""})

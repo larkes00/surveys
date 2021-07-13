@@ -1,14 +1,20 @@
 {% extends 'surveys/base.html' %}
 
 {% block content %}
-    {% for complete_survey in data.values %}
-        <h3>Survey name: {{ complete_survey.name }}</h3>
-        {% for compl_sur_data in complete_survey.data %}
-            <p>{{ compl_sur_data.completed_at }}</p>
-            <p>{{ compl_sur_data.complete_survey.completed_at }}</p>
-            <p>{{ compl_sur_data.question }}</p>
-            <p>{{ compl_sur_data.answer }}</p>
+    {% for re in result.values %}
+        {% for element in re.data %}
+            {% if forloop.first %}
+                <h1>Survey name: {{ re.name }}</h1>
+                <h6>{{ re.completed_at }}</h6>
+            {% endif %}
+            <p><b>Question: {{ element.question }}</b></p>
+                {% for answer in element.answer %}
+                    <p>Answer: {{ answer }}</p>
+                {% endfor %}
+
         {% endfor %}
+
     {% endfor %}
+
 {% endblock %}
 
