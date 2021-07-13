@@ -57,7 +57,7 @@ def complete_survey_sql(user_id):
     cursor = connection.cursor()
     cursor.execute(
         f"""
-        SELECT survey.id, survey.name, auth_user.username, compl_survey.completed_at, answer.content as answer, question.content as question
+        SELECT survey.name, auth_user.username, compl_survey.completed_at, answer.content as answer, question.content as question
             FROM surveys_completesurvey as compl_survey
             JOIN surveys_survey survey on compl_survey.survey_id = survey.id
             JOIN surveys_completesurveyquestion compl_survey_question on compl_survey.id = compl_survey_question.complete_survey_id
