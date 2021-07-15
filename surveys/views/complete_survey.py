@@ -57,7 +57,7 @@ def complete_survey_sql(user_id):
     cursor = connection.cursor()
     cursor.execute(
         f"""
-        SELECT survey.name, auth_user.username, compl_survey.completed_at, answer.content as answer, question.content as question
+        SELECT compl_survey.id as complete_survey_id, survey.name, auth_user.username, compl_survey.completed_at, answer.content as answer, question.content as question
             FROM surveys_completesurvey as compl_survey
             JOIN surveys_survey survey on compl_survey.survey_id = survey.id
             JOIN surveys_completesurveyquestion compl_survey_question on compl_survey.id = compl_survey_question.complete_survey_id
@@ -75,22 +75,22 @@ def view_complete_survey(request, user_id):
     complete_surveys = complete_survey_sql(user_id=user_id)
     result = {}
     for complete_survey in complete_surveys:
-        if str(complete_survey["completed_at"]) in result:
+        if complete_survey["complete_survey_id"] in result:
             question_exists = False
-            for element in result[str(complete_survey["completed_at"])]["data"]:
+            for element in result[complete_survey["complete_survey_id"]]["data"]:
                 if complete_survey["question"] in element["question"]:
                     element["answer"].append(complete_survey["answer"])
                     question_exists = True
                     break
             if not question_exists:
-                result[str(complete_survey["completed_at"])]["data"].append(
+                result[complete_survey["complete_survey_id"]]["data"].append(
                     {
                         "question": complete_survey["question"],
                         "answer": [complete_survey["answer"]],
                     }
                 )
         else:
-            result[str(complete_survey["completed_at"])] = {
+            result[complete_survey["complete_survey_id"]] = {
                 "name": complete_survey["name"],
                 "completed_at": complete_survey["completed_at"],
                 "data": [
@@ -185,33 +185,32 @@ def leaderboard_correct_answers(request):
     cursor = connection.cursor()
     cursor.execute(
         f"""
-        SELECT complete_survey.survey_id, complete_survey.completed_at, (SELECT COUNT(question_answer.answer_id) ) as count_correct_answer
+        SELECT survey.name, 
+        complete_survey.survey_id, complete_survey.completed_at, cast(COUNT(
+            case when question_answer.is_correct = True then 1 else null end
+        ) as numeric ) / COUNT(complete_survey_question.answer_id) * 100 as percent_right_answers
         FROM surveys_completesurvey as complete_survey
         JOIN surveys_survey as survey ON survey.id = complete_survey.survey_id
         JOIN surveys_completesurveyquestion as complete_survey_question ON complete_survey_question.complete_survey_id = complete_survey.id
         JOIN surveys_questionanswer as question_answer ON question_answer.answer_id = complete_survey_question.answer_id
-        WHERE complete_survey.user_id = {request.user.id} and question_answer.is_correct = True and survey.type = 'Test'
-        GROUP BY complete_survey.completed_at, complete_survey.survey_id
+        WHERE complete_survey.user_id = 4  and survey.type = 'Test'
+        GROUP BY complete_survey.completed_at, complete_survey.survey_id, survey.name
         ORDER BY complete_survey.completed_at DESC;
         """
     )
-    correct_answers = dictfetchall(cursor)
-    cursor.execute(
-        f"""
-        SELECT complete_survey.survey_id, complete_survey.completed_at, COUNT(complete_survey_question.answer_id) as count_user_answer
-        FROM surveys_completesurvey as complete_survey
-        JOIN surveys_survey as survey ON survey.id = complete_survey.survey_id
-        JOIN surveys_completesurveyquestion as complete_survey_question ON complete_survey_question.complete_survey_id = complete_survey.id
-        WHERE complete_survey.user_id = {request.user.id} and survey.type = 'Test'
-        GROUP BY complete_survey.completed_at, complete_survey.survey_id
-        ORDER BY complete_survey.completed_at DESC;
-        """
-    )
-    user_answers = dictfetchall(cursor)
-    user_answers_list = defaultdict(dict)
-    for i in (user_answers, correct_answers):
-        for elem in i:
-            user_answers_list[elem['completed_at']].update(elem)
+    # a = """
+    # SELECT complete_survey.survey_id, complete_survey_question.question_id,question_answer.is_correct ,complete_survey_question.answer_id
+    # FROM surveys_completesurvey as complete_survey
+    # JOIN surveys_completesurveyquestion as complete_survey_question ON complete_survey_question.complete_survey_id = complete_survey.id
+    # JOIN
+    # surveys_questionanswer as question_answer
+    # ON
+    # question_answer.answer_id = complete_survey_question.answer_id
+    # WHERE user_id = 4
+    # ORDER BY complete_survey_question.question_id
+    # """
+    # TODO: убрать запрос ниже
+    percent_right_answers = dictfetchall(cursor)
     cursor.execute(
         """
         SELECT survey.id as survey_id, COUNT(question_answer.answer_id)
@@ -224,17 +223,12 @@ def leaderboard_correct_answers(request):
     )
     count_right_answers = dictfetchall(cursor)
     result = []
-    for i in user_answers_list.values():
+    for i in percent_right_answers:
         for j in count_right_answers:
             if j["survey_id"] == i["survey_id"]:
-                percent_right_answers = (i["count_correct_answer"] / j["count"]) * 100
-                percent_user_answers = (i["count_user_answer"] / j["count"]) * 100
-                if percent_user_answers > 100:
-                    percent_right_answers = 0
-                elif percent_user_answers == 100 and percent_right_answers != 100:
-                    percent_right_answers -= percent_right_answers / 4
                 result.append({
+                    "survey_name": i["name"],
                     "completed_at": i["completed_at"],
-                    "percent_right_answers": percent_right_answers
+                    "percent_right_answers": round(i["percent_right_answers"], 2),
                 })
-    return JsonResponse({"result": result})
+    return render(request, "surveys/right_answers.html", {"data": result})

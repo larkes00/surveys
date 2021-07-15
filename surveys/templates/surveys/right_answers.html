@@ -1,0 +1,9 @@
+{% extends 'surveys/base.html' %}
+
+{% block content %}
+    {% for element in data %}
+        <p>{{ element.survey_name }}</p>
+        <p>{{ element.completed_at }}</p>
+        <p>{{ element.percent_right_answers }}</p>
+    {% endfor %}
+{% endblock %}
