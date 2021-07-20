@@ -209,6 +209,36 @@ def leaderboard_correct_answers(request):
     # WHERE user_id = 4
     # ORDER BY complete_survey_question.question_id
     # """
+    b = """
+    SELECT a.id ,a.name, 
+        a.question_id, 
+        a.answer_id as user_answer_id,
+        b.answer_id as right_answer_id
+    FROM (SELECT complete_survey.id ,survey.name, 
+            complete_survey_question.question_id, 
+            complete_survey_question.answer_id
+        FROM surveys_completesurvey as complete_survey
+        JOIN surveys_completesurveyquestion as complete_survey_question ON complete_survey_question.complete_survey_id = complete_survey.id
+        JOIN surveys_survey as survey ON survey.id = complete_survey.survey_id
+        WHERE survey.type = 'Test') as a
+    FULL OUTER JOIN (SELECT  survey.name, 
+        question_answer.question_id, 
+        question_answer.answer_id
+        FROM surveys_questionanswer as question_answer
+        JOIN surveys_surveyquestion as survey_question ON survey_question.question_id = question_answer.question_id
+        JOIN surveys_survey as survey ON survey.id = survey_question.survey_id
+        WHERE question_answer.is_correct = TRUE) as b on a.answer_id = b.answer_id and a.question_id = b.question_id
+        ORDER BY a.id;
+    """
+    """
+    SELECT  survey.name, 
+        question_answer.question_id, 
+        question_answer.answer_id
+        FROM surveys_questionanswer as question_answer
+        JOIN surveys_surveyquestion as survey_question ON survey_question.question_id = question_answer.question_id
+        JOIN surveys_survey as survey ON survey.id = survey_question.survey_id
+        WHERE question_answer.is_correct = TRUE;
+    """
     # TODO: убрать запрос ниже
     percent_right_answers = dictfetchall(cursor)
     cursor.execute(
