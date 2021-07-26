@@ -221,7 +221,7 @@ def leaderboard_correct_answers(request):
     """
     b = """
     SELECT answers.id, answers.completed_at,
-    CAST(COUNT(case when answers.correct_answer = 1 then 1 end ) as numeric) / COUNT(answers.correct_answer) * 100,
+    CAST(COUNT(case when answers.correct_answer = 1 then 1 end ) as numeric) / COUNT(answers.correct_answer) * 100
     FROM (
         SELECT a.id ,a.name, 
         a.question_id, a.completed_at,
@@ -242,7 +242,7 @@ def leaderboard_correct_answers(request):
         FROM surveys_questionanswer as question_answer
         JOIN surveys_surveyquestion as survey_question ON survey_question.question_id = question_answer.question_id
         JOIN surveys_survey as survey ON survey.id = survey_question.survey_id
-        WHERE question_answer.is_correct = TRUE) as b on a.question_id = b.question_id and a.answer_id = b.answer_id
+        WHERE question_answer.is_correct = TRUE and survey.type = 'Test') as b on a.question_id = b.question_id and a.answer_id = b.answer_id
     GROUP BY a.id ,a.name, a.question_id, a.completed_at
     ORDER BY a.id) as answers
     GROUP BY answers.id, answers.completed_at
