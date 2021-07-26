@@ -198,18 +198,7 @@ def leaderboard_correct_answers(request):
         ORDER BY complete_survey.completed_at DESC;
         """
     )
-    # a = """
-    # SELECT complete_survey.survey_id, complete_survey_question.question_id,question_answer.is_correct ,complete_survey_question.answer_id
-    # FROM surveys_completesurvey as complete_survey
-    # JOIN surveys_completesurveyquestion as complete_survey_question ON complete_survey_question.complete_survey_id = complete_survey.id
-    # JOIN
-    # surveys_questionanswer as question_answer
-    # ON
-    # question_answer.answer_id = complete_survey_question.answer_id
-    # WHERE user_id = 4
-    # ORDER BY complete_survey_question.question_id
-    # """
-    b = """
+    c = """
     SELECT a.id ,a.name, 
         a.question_id, 
         a.answer_id as user_answer_id,
@@ -227,8 +216,37 @@ def leaderboard_correct_answers(request):
         FROM surveys_questionanswer as question_answer
         JOIN surveys_surveyquestion as survey_question ON survey_question.question_id = question_answer.question_id
         JOIN surveys_survey as survey ON survey.id = survey_question.survey_id
-        WHERE question_answer.is_correct = TRUE) as b on a.answer_id = b.answer_id and a.question_id = b.question_id
-        ORDER BY a.id;
+    WHERE question_answer.is_correct = TRUE) as b on a.answer_id = b.answer_id and a.question_id = b.question_id
+    ORDER BY a.id;
+    """
+    b = """
+    SELECT answers.id, answers.completed_at,
+    CAST(COUNT(case when answers.correct_answer = 1 then 1 end ) as numeric) / COUNT(answers.correct_answer) * 100,
+    FROM (
+        SELECT a.id ,a.name, 
+        a.question_id, a.completed_at,
+        case when bool_or(a.answer_id = b.answer_id) then COUNT(b.answer_id) / COUNT(a.answer_id)
+        else 0 end as correct_answer
+    FROM (SELECT complete_survey.id ,survey.name, 
+            complete_survey_question.question_id, 
+            complete_survey_question.answer_id,
+            complete_survey.completed_at
+        FROM surveys_completesurvey as complete_survey
+        JOIN surveys_completesurveyquestion as complete_survey_question ON complete_survey_question.complete_survey_id = complete_survey.id
+        JOIN surveys_survey as survey ON survey.id = complete_survey.survey_id
+        WHERE survey.type = 'Test') a
+    FULL OUTER JOIN (SELECT  survey.name, 
+        question_answer.question_id, 
+        question_answer.answer_id,
+        question_answer.is_correct
+        FROM surveys_questionanswer as question_answer
+        JOIN surveys_surveyquestion as survey_question ON survey_question.question_id = question_answer.question_id
+        JOIN surveys_survey as survey ON survey.id = survey_question.survey_id
+        WHERE question_answer.is_correct = TRUE) as b on a.question_id = b.question_id and a.answer_id = b.answer_id
+    GROUP BY a.id ,a.name, a.question_id, a.completed_at
+    ORDER BY a.id) as answers
+    GROUP BY answers.id, answers.completed_at
+    ORDER BY answers.completed_at DESC;
     """
     """
     SELECT  survey.name, 
